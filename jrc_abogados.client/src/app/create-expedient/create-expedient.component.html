@@ -1,0 +1,61 @@
+<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">{{tituloForm}}</h5>
+      <button type="button" id="bClose" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="limpiarForm()"></button>
+    </div>
+    <div class="modal-body">
+      <form class="row g-3 needs-validation" name="formularioExpediente" novalidate>
+        <div class="col-12">
+          <input type="text" class="form-control" name="nombre" id="validacionNombre" placeholder="Nombre del expediente" minlength="6" maxlength="30" [(ngModel)]="expediente.nombre" required>
+          <div class="invalid-feedback">
+            {{ !expediente.nombre ? 'Por favor ingrese el nombre del expediente.' : 'Ingrese un nombre mas completo.' }}
+          </div>
+        </div>
+        <div class="col-12">
+          <select class="form-select" name="Cliente" id="validacionCliente" [(ngModel)]="expediente.clienteId" (change)="onClienteChange()" required>
+            <option value="" disabled selected>Selecciona un cliente</option>
+            <option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.nombre }} {{ cliente.apellido }}</option>
+          </select>
+          <div class="invalid-feedback">
+            Por favor seleccion un cliente.
+          </div>
+        </div>
+        <div class="col-12">
+          <select class="form-select" name="TipoExpediente" id="validacionTipoExpediente" [(ngModel)]="expediente.tipoExpedienteId" (change)="onTypeExpedientChange()" required>
+            <option value="" disabled selected>Selecciona el tipo de Expediente</option>
+            <option *ngFor="let tipoExpediente of tiposExpediente" [value]="tipoExpediente.id">{{ tipoExpediente.nombre }}</option>
+          </select>
+          <div class="invalid-feedback">
+            Por favor seleccion un tipo de Expediente.
+          </div>
+        </div>
+
+        <div class="col-12" *ngIf="expediente.tipoExpedienteId == '2'">
+          <select class="form-select" name="Caso" id="validacionCaso" [(ngModel)]="expediente.casoId" required>
+            <option value="" disabled selected>Selecciona un caso</option>
+            <option *ngFor="let caso of casos" [value]="caso.id">{{ caso.juzgado.numeroExpediente }}</option>
+          </select>
+          <div class="invalid-feedback">
+            Por favor seleccion un caso.
+          </div>
+        </div>
+
+        <div *ngIf="errorMensaje" class="alert alert-danger" role="alert">
+          {{ errorMensaje }}
+        </div>
+        <div class="col-12  d-flex justify-content-end">
+          <button *ngIf="expedienteId === 0" class="btn btn-primary" type="submit" [disabled]="creandoExpediente" (click)="iniciarValidadores()">
+            <span *ngIf="!creandoExpediente">Crear Expediente</span>
+            <span *ngIf="creandoExpediente">Creando Expediente...</span>
+          </button>
+
+          <button *ngIf="expedienteId !== 0" class="btn btn-primary" type="submit" [disabled]="creandoExpediente" (click)="iniciarValidadores()">
+            <span *ngIf="!creandoExpediente">Actualizar</span>
+            <span *ngIf="creandoExpediente">Actualizando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
