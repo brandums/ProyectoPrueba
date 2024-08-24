@@ -38,10 +38,22 @@ namespace JRC_Abogados.Server.Controllers
             return casos;
         }
 
-        [HttpGet("expedientesByClient/{id}")]
-        public async Task<ActionResult<IEnumerable<Caso>>> GetCasesByClient(int id)
+        [HttpGet("expedientesByClient/{ClienteId}/{casoId}")]
+        public async Task<ActionResult<IEnumerable<Caso>>> GetCasesByClient(int clienteId, int casoId)
         {
-            var casos = await _context.Caso.Where(c => c.ClienteId == id).ToListAsync();
+            var expedienteCasoIds = await _context.Expediente
+                                          .Select(e => e.CasoId)
+                                          .ToListAsync();
+
+            var casos = await _context.Caso
+                                          .Where(c => c.ClienteId == clienteId && !expedienteCasoIds.Contains(c.Id))
+                                          .ToListAsync();
+
+            if (casoId != 0)
+            {
+                var caso = await _context.Caso.FindAsync(casoId);
+                casos.Add(caso);
+            }
 
             foreach (var caso in casos)
             {

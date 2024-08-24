@@ -7,13 +7,13 @@
     <div class="modal-body">
       <form class="row g-3 needs-validation" name="formularioExpediente" novalidate>
         <div class="col-12">
-          <input type="text" class="form-control" name="nombre" id="validacionNombre" placeholder="Nombre del expediente" minlength="6" maxlength="30" [(ngModel)]="expediente.nombre" required>
+          <input type="text" class="form-control" name="nombre" id="validacionNombre" placeholder="Nombre del expediente" minlength="5" maxlength="30" [(ngModel)]="expediente.nombre" required>
           <div class="invalid-feedback">
             {{ !expediente.nombre ? 'Por favor ingrese el nombre del expediente.' : 'Ingrese un nombre mas completo.' }}
           </div>
         </div>
         <div class="col-12">
-          <select class="form-select" name="Cliente" id="validacionCliente" [(ngModel)]="expediente.clienteId" (change)="onClienteChange()" required>
+          <select class="form-select" name="Cliente" id="validacionCliente" [(ngModel)]="expediente.clienteId" (change)="onClienteChange()" [disabled]="expedienteId !== 0" required>
             <option value="" disabled selected>Selecciona un cliente</option>
             <option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.nombre }} {{ cliente.apellido }}</option>
           </select>
@@ -34,6 +34,7 @@
         <div class="col-12" *ngIf="expediente.tipoExpedienteId == '2'">
           <select class="form-select" name="Caso" id="validacionCaso" [(ngModel)]="expediente.casoId" required>
             <option value="" disabled selected>Selecciona un caso</option>
+            <option *ngIf="casos.length === 0" disabled>Este cliente no tiene casos por registrar.</option>
             <option *ngFor="let caso of casos" [value]="caso.id">{{ caso.juzgado.numeroExpediente }}</option>
           </select>
           <div class="invalid-feedback">

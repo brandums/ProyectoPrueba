@@ -40,7 +40,7 @@ export class CreateExpedientComponent implements OnInit {
       if (id != 0) {
         this.expedienteService.getExpediente(id).subscribe(data => {
           this.expediente = data;
-          this.onClienteChange();
+          this.getCasosByClient(this.expediente.casoId);
         })
         this.tituloForm = "Actualizar datos del Expediente"
       }
@@ -51,8 +51,12 @@ export class CreateExpedientComponent implements OnInit {
   }
 
   onClienteChange(): void {
+    this.getCasosByClient(0);
+  }
+
+  getCasosByClient(number: number) {
     if (this.expediente.clienteId) {
-      this.casoService.getCasosByClient(parseInt(this.expediente.clienteId)).subscribe(data => {
+      this.casoService.getCasosByClient(parseInt(this.expediente.clienteId), number).subscribe(data => {
         this.casos = data;
       }, error => {
         this.casos = [];

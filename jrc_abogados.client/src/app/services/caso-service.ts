@@ -39,8 +39,8 @@ export class CasoService {
     );
   }
 
-  getCasosByClient(id: number): Observable<Caso[]> {
-    return this.http.get<Caso[]>(`${this.baseUrl}/expedientesByClient/${id}`).pipe(
+  getCasosByClient(id: number, casoId: number): Observable<Caso[]> {
+    return this.http.get<Caso[]>(`${this.baseUrl}/expedientesByClient/${id}/${casoId}`).pipe(
       map((casos: Caso[]) => {
         return casos.map(caso => {
           caso.fechaInicio = new Date(caso.fechaInicio).toISOString().split('T')[0];

@@ -35,6 +35,7 @@ namespace JRC_Abogados.Server.Controllers
                     expediente.Caso.Cliente = await _context.Cliente.FindAsync(expediente.ClienteId);
                 }
 
+                expediente.TipoExpediente = await _context.TipoExpediente.FindAsync(expediente.TipoExpedienteId);
                 expediente.Cliente = await _context.Cliente.FindAsync(expediente.ClienteId);
             }
 
@@ -64,11 +65,14 @@ namespace JRC_Abogados.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Expediente>> PostExpediente(ExpedienteDTO expedienteDTO)
         {
-            var existingExpediente = await _context.Expediente.FirstOrDefaultAsync(c => c.CasoId == expedienteDTO.CasoId);
-
-            if (existingExpediente != null)
+            if (expedienteDTO.TipoExpedienteId == 1)
             {
-                return Conflict(new { message = "El expediente ya está registrado." });
+                var existingExpediente = await _context.Expediente.FirstOrDefaultAsync(c => c.ClienteId == expedienteDTO.ClienteId && c.TipoExpedienteId == 1);
+
+                if (existingExpediente != null)
+                {
+                    return Conflict(new { message = "El expediente ya está registrado." });
+                }
             }
 
             var expediente = new Expediente();

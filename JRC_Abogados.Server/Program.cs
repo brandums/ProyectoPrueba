@@ -16,8 +16,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
-        builder => builder.WithOrigins("https://localhost:4200")
-        //builder => builder.WithOrigins("https://backendjrc-001-site1.ftempurl.com")
+        //builder => builder.WithOrigins("https://localhost:4200")
+        builder => builder.WithOrigins("https://backendjrc-001-site1.ftempurl.com")
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .AllowCredentials());

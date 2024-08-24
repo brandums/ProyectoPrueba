@@ -12,7 +12,7 @@
         <option value="nombre">Nombre Expediente</option>
         <option value="cliente.nombre">Nombre Cliente</option>
         <option value="cliente.apellido">Apellido Cliente</option>
-        <option value="caso.juzgado.numeroExpediente">Numero de Expediente</option>
+        <option value="tipoExpediente.nombre">Tipo de Expediente</option>
       </select>
       <input type="text" class="form-control" id="searchInput" [(ngModel)]="buscarPalabra" placeholder="Buscar Expediente">
     </div>
@@ -25,7 +25,7 @@
         <th>Nombre Expediente</th>
         <th>Nombre Cliente</th>
         <th>Apellido Cliente</th>
-        <th>Numero de Expediente</th>
+        <th>Tipo</th>
         <th>Agregar Doc.</th>
       </tr>
     </thead>
@@ -37,7 +37,7 @@
         <td>{{ expediente.nombre }}</td>
         <td>{{ expediente.cliente.nombre }}</td>
         <td>{{ expediente.cliente.apellido }}</td>
-        <td>{{ expediente.caso?.juzgado?.numeroExpediente }}</td>
+        <td>{{ expediente.tipoExpediente?.nombre }}</td>
         <td class="d-flex justify-content-center"><button style="border:none;"><i class="far fa-folder-open"></i></button>
         </td>
       </tr>
@@ -76,11 +76,11 @@
       <div class="modal-body">
         <p><strong>Nombre:</strong> {{ expedienteSeleccionado?.nombre }}</p>
         <p><strong>Tipo de Expediente:</strong> {{ expedienteSeleccionado?.tipoExpediente?.nombre }}</p>
-        <p><strong>Datos del Caso</strong></p>
-        <p><strong>Tipo de Caso:</strong> {{ expedienteSeleccionado?.caso?.tipoCaso?.nombre }}</p>
-        <p><strong>Descripcion:</strong> {{ expedienteSeleccionado?.caso?.descripcion }}</p>
-        <p><strong>Ciudad:</strong> {{ expedienteSeleccionado?.caso?.ubicacion?.ciudad }}</p>
-        <p><strong>Numero de Expediente:</strong> {{ expedienteSeleccionado?.caso?.juzgado?.numeroExpediente }}</p>
+        <p *ngIf="expedienteSeleccionado?.caso"><strong>Datos del Caso</strong></p>
+        <p *ngIf="expedienteSeleccionado?.caso"><strong>Tipo de Caso:</strong> {{ expedienteSeleccionado?.caso?.tipoCaso?.nombre }}</p>
+        <p *ngIf="expedienteSeleccionado?.caso"><strong>Descripcion:</strong> {{ expedienteSeleccionado?.caso?.descripcion }}</p>
+        <p *ngIf="expedienteSeleccionado?.caso"><strong>Ciudad:</strong> {{ expedienteSeleccionado?.caso?.ubicacion?.ciudad }}</p>
+        <p *ngIf="expedienteSeleccionado?.caso"><strong>Numero de Expediente:</strong> {{ expedienteSeleccionado?.caso?.juzgado?.numeroExpediente }}</p>
         <p><strong>Datos del Cliente</strong></p>
         <p><strong>Nombre Cliente:</strong> {{ expedienteSeleccionado?.cliente?.nombre }}</p>
         <p><strong>Apellido Cliente:</strong> {{ expedienteSeleccionado?.cliente?.apellido }}</p>
