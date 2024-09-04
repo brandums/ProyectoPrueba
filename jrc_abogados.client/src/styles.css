@@ -75,3 +75,9 @@ input[type="number"] {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.pdf-container {
+  height: 800px;
+  width: 1000px;
+}

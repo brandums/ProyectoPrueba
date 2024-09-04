@@ -82,7 +82,7 @@ export class CreateClientComponent implements OnInit {
 
   validarEmail(event: KeyboardEvent | ClipboardEvent) {
     const teclaPresionada = (event as KeyboardEvent).key;
-    const patron = /^[^\s'"]$/;
+    const patron = /^[^\s'"@]$/;
 
     if (event instanceof KeyboardEvent) {
       if (!patron.test(teclaPresionada) && teclaPresionada !== 'Backspace' && teclaPresionada !== 'Delete' && teclaPresionada !== 'ArrowLeft' && teclaPresionada !== 'ArrowRight') {
@@ -92,32 +92,88 @@ export class CreateClientComponent implements OnInit {
 
     if (event instanceof ClipboardEvent) {
       const clipboardData = event.clipboardData?.getData('text') || '';
-      if (/[^\s'"]/.test(clipboardData)) {
+      if (/[@^\s'"]/.test(clipboardData)) {
         event.preventDefault();
       }
     }
   }
 
+  _telefono: string = '';
+
+  get telefono(): string {
+    return this.formatPhone(this._telefono);
+  }
+  
+  set telefono(value: string) {
+    this._telefono = value.replace(/\D/g, '');
+  }
+  
   limitarNumeros(event: KeyboardEvent | ClipboardEvent) {
     const teclaPresionada = (event as KeyboardEvent).key;
     const patron = /^[0-9]$/;
-    
+
+    if (event instanceof ClipboardEvent) {
+      event.preventDefault();
+      return;
+    }
+
     if (event instanceof KeyboardEvent) {
-      if (!patron.test(teclaPresionada) && teclaPresionada !== 'Backspace' && teclaPresionada !== 'Delete' && teclaPresionada !== 'ArrowLeft' && teclaPresionada !== 'ArrowRight') {
+      if (!patron.test(teclaPresionada) &&
+        teclaPresionada !== 'Backspace' &&
+        teclaPresionada !== 'Delete' &&
+        teclaPresionada !== 'ArrowLeft' &&
+        teclaPresionada !== 'ArrowRight') {
         event.preventDefault();
       }
     }
+  }
+  
+  formatPhone(value: string): string {
+    if (value.length != 0) {
+      if (value.length <= 2) {
+        return `(${value}`;
+      } else if (value.length <= 6) {
+        return `(${value.slice(0, 2)}) ${value.slice(2)}`;
+      } else {
+        return `(${value.slice(0, 2)}) ${value.slice(2, 6)}-${value.slice(6, 10)}`;
+      }
+    }
+    return ""
+  }
+
+  validarTexto(event: KeyboardEvent, minChars: number) {
+    const teclaPresionada = event.key;
+    const valorActual = (event.target as HTMLInputElement).value;
     
-    if (event instanceof ClipboardEvent) {
+    const patron = /^[a-zA-Z\s]*$/;
+
+    if (valorActual.length <= minChars && teclaPresionada === ' ') {
+      event.preventDefault();
+      return;
+    }
+    
+    if (valorActual.slice(-1) === ' ' && teclaPresionada === ' ') {
+      event.preventDefault();
+      return;
+    }
+    
+    if (!patron.test(teclaPresionada)) {
       event.preventDefault();
     }
   }
 
-  validarTexto(event: KeyboardEvent) {
+  validarDireccion(event: KeyboardEvent, minChars: number) {
     const teclaPresionada = event.key;
-    const patron = /^[a-zA-Z\s]*$/;
-    if (!patron.test(teclaPresionada)) {
+    const valorActual = (event.target as HTMLInputElement).value;
+
+    if (valorActual.length <= minChars && teclaPresionada === ' ') {
       event.preventDefault();
+      return;
+    }
+
+    if (valorActual.slice(-1) === ' ' && teclaPresionada === ' ') {
+      event.preventDefault();
+      return;
     }
   }
 
@@ -161,6 +217,8 @@ export class CreateClientComponent implements OnInit {
     this.creandoCliente = true;
     this.errorMensaje = null;
     this.unirEmail()
+    this.cliente.telefono = this._telefono;
+
     this.ubicacionService.crearUbicacion(this.cliente.ubicacion).subscribe(data => {
       this.cliente.ubicacionId = data.id;
 
@@ -180,6 +238,8 @@ export class CreateClientComponent implements OnInit {
 
   actualizarCliente() {
     this.unirEmail();
+    this.cliente.telefono = this._telefono;
+
     this.ubicacionService.actualizarUbicacion(this.cliente.ubicacionId, this.cliente.ubicacion).subscribe(() => {
       this.clienteService.actualizarCliente(this.clienteId, this.cliente).subscribe(() => {
         this.clienteService.nuevoCliente();
@@ -207,6 +267,7 @@ export class CreateClientComponent implements OnInit {
     this.tituloForm = "Crear nuevo Cliente"
     this.formValidado = false;
     this.errorMensaje = null;
+    this._telefono = "";
 
     const forms = document.querySelectorAll('.needs-validation');
     Array.from(forms).forEach((form: Element) => {

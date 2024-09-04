@@ -126,11 +126,18 @@ export class CreateCaseComponent implements OnInit {
     }
   }
 
-  validarTexto(event: KeyboardEvent) {
+  validarTexto(event: KeyboardEvent, minChars: number) {
     const teclaPresionada = event.key;
-    const patron = /^[a-zA-Z\s]*$/;
-    if (!patron.test(teclaPresionada)) {
+    const valorActual = (event.target as HTMLInputElement).value;
+
+    if (valorActual.length <= minChars && teclaPresionada === ' ') {
       event.preventDefault();
+      return;
+    }
+
+    if (valorActual.slice(-1) === ' ' && teclaPresionada === ' ') {
+      event.preventDefault();
+      return;
     }
   }
 

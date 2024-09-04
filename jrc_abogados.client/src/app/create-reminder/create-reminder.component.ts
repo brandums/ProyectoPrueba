@@ -56,12 +56,41 @@ export class CreateReminderComponent implements OnInit {
     return formatoFecha;
   }
 
-  validarTexto(event: KeyboardEvent) {
+  validarTexto(event: KeyboardEvent, minChars: number) {
     const teclaPresionada = event.key;
-    const patron = /^[a-zA-Z\s]*$/;
-    if (!patron.test(teclaPresionada)) {
+    const valorActual = (event.target as HTMLInputElement).value;
+
+    if (valorActual.length <= minChars && teclaPresionada === ' ') {
       event.preventDefault();
+      return;
     }
+
+    if (valorActual.slice(-1) === ' ' && teclaPresionada === ' ') {
+      event.preventDefault();
+      return;
+    }
+  }
+
+  validarHora(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const horaSeleccionada = inputElement.value;
+
+    const inicioManana = "08:00";
+    const finManana = "12:00";
+
+    const inicioTarde = "14:00";
+    const finTarde = "19:00";
+
+    if (
+      (horaSeleccionada >= inicioManana && horaSeleccionada <= finManana) ||
+      (horaSeleccionada >= inicioTarde && horaSeleccionada <= finTarde)
+    ) {
+      inputElement.setCustomValidity("");
+    } else {
+      inputElement.setCustomValidity("Por favor seleccione una hora válida.");
+    }
+
+    inputElement.reportValidity();
   }
 
   iniciarValidadores() {

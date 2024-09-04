@@ -38,7 +38,7 @@
         <td>{{ expediente.cliente.nombre }}</td>
         <td>{{ expediente.cliente.apellido }}</td>
         <td>{{ expediente.tipoExpediente?.nombre }}</td>
-        <td class="d-flex justify-content-center"><button style="border:none;"><i class="far fa-folder-open"></i></button>
+        <td class="d-flex justify-content-center"><button style="border:none;" (click)="openDocumentList(expediente.id)"><i class="far fa-folder-open"></i></button>
         </td>
       </tr>
     </tbody>

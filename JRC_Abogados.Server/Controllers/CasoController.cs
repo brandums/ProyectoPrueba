@@ -148,13 +148,14 @@ namespace JRC_Abogados.Server.Controllers
                 SendStatusEmail(caso);
             }
 
+            _context.Entry(caseExisting).CurrentValues.SetValues(caso);
+
             caso.Cliente = null;
             caso.Estado = null;
             caso.Juzgado = null;
             caso.TipoCaso = null;
             caso.Ubicacion = null;
 
-            _context.Entry(caseExisting).CurrentValues.SetValues(caso);
             await _context.SaveChangesAsync();
 
             return Ok();

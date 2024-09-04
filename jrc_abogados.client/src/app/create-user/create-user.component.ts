@@ -57,9 +57,22 @@ export class CreateUserComponent implements OnInit {
     })
   }
 
-  validarTexto(event: KeyboardEvent) {
+  validarTexto(event: KeyboardEvent, minChars: number) {
     const teclaPresionada = event.key;
+    const valorActual = (event.target as HTMLInputElement).value;
+
     const patron = /^[a-zA-Z\s]*$/;
+
+    if (valorActual.length <= minChars && teclaPresionada === ' ') {
+      event.preventDefault();
+      return;
+    }
+
+    if (valorActual.slice(-1) === ' ' && teclaPresionada === ' ') {
+      event.preventDefault();
+      return;
+    }
+
     if (!patron.test(teclaPresionada)) {
       event.preventDefault();
     }
@@ -67,7 +80,7 @@ export class CreateUserComponent implements OnInit {
 
   validarEmail(event: KeyboardEvent | ClipboardEvent) {
     const teclaPresionada = (event as KeyboardEvent).key;
-    const patron = /^[^\s'"]$/;
+    const patron = /^[^\s'"@]$/;
 
     if (event instanceof KeyboardEvent) {
       if (!patron.test(teclaPresionada) && teclaPresionada !== 'Backspace' && teclaPresionada !== 'Delete' && teclaPresionada !== 'ArrowLeft' && teclaPresionada !== 'ArrowRight') {
@@ -77,7 +90,7 @@ export class CreateUserComponent implements OnInit {
 
     if (event instanceof ClipboardEvent) {
       const clipboardData = event.clipboardData?.getData('text') || '';
-      if (/[^\s'"]/.test(clipboardData)) {
+      if (/[@^\s'"]/.test(clipboardData)) {
         event.preventDefault();
       }
     }

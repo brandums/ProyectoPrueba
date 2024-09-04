@@ -16,6 +16,7 @@ namespace JRC_Abogados.Server.DataBaseContext
         public DbSet<Rol> Rol { get; set; }
         public DbSet<TipoCaso> TipoCaso { get; set; }
         public DbSet<TipoExpediente> TipoExpediente { get; set; }
+        public DbSet<TipoDocumento> TipoDocumento { get; set; }
         public DbSet<Juzgado> Juzgado { get; set; }
         public DbSet<Estado> Estado { get; set; }
 

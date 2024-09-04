@@ -11,5 +11,7 @@
     <Folder Include="src\app\appointment-list\" />
     <Folder Include="src\app\case-list\" />
     <Folder Include="src\app\expedient-list\" />
+    <Folder Include="src\app\create-document\" />
+    <Folder Include="src\app\document-list\" />
   </ItemGroup>
 </Project>

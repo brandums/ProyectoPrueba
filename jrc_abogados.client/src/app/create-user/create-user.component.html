@@ -6,15 +6,17 @@
     </div>
     <div class="modal-body">
       <form class="row g-3 needs-validation" name="formularioUsuario" novalidate>
-        <div class="col-12">
-          <input type="text" class="form-control" name="Nombre" id="validacionNombre" placeholder="Nombre completo" minlength="2" maxlength="30" onpaste="return false;" (keydown)="validarTexto($event)" [(ngModel)]="usuario.nombre" required>
+        <div class="col-12 input-group">
+          <span class="input-group-text" id="inputGroupPrepend">Nombre</span>
+          <input type="text" class="form-control" name="Nombre" id="validacionNombre" placeholder="Ingrese el nombre completo" minlength="2" maxlength="30" onpaste="return false;" (keydown)="validarTexto($event, 1)" [(ngModel)]="usuario.nombre" required>
           <div class="invalid-feedback">
             {{ !usuario.nombre ? 'Por favor ingrese su nombre.' : 'El nombre debe tener al menos 2 caracteres.' }}
           </div>
         </div>
         <div class="col-12">
           <div class="input-group has-validation">
-            <input type="text" class="form-control" name="Email" id="validacionEmail" aria-describedby="inputGroupPrepend" minlength="6" maxlength="20" [(ngModel)]="nickEmail" (paste)="validarEmail($event)" (keydown)="validarEmail($event)" placeholder="Email" required>
+            <span class="input-group-text" id="inputGroupPrepend">Email</span>
+            <input type="text" class="form-control" name="Email" id="validacionEmail" aria-describedby="inputGroupPrepend" minlength="5" maxlength="20" autocomplete="new-password" (paste)="validarEmail($event)" (keydown)="validarEmail($event)" [(ngModel)]="nickEmail" placeholder="Nickname" required>
             <span class="input-group-text" id="inputGroupPrepend">@</span>
             <select class="form-select auxEmail" name="extencionEmail" id="validacionEmail" [(ngModel)]="extencionEmail" required>
               <option value="gmail">gmail</option>
@@ -24,14 +26,15 @@
             </select>
             <span class="input-group-text" id="inputGroupPrepend">.com</span>
             <div class="invalid-feedback">
-              Por favor ingrese su email.
+              {{ !nickEmail ? 'Por favor ingrese su email.' : 'El nickname debe tener al menos 5 caracteres.' }}
             </div>
           </div>
         </div>
-        <div class="col-12" *ngIf="viewPassword">
-          <input [type]="verContrasenia ? 'text' : 'password'" class="form-control" name="Contrasenia" id="validacionContrasenia" placeholder="Contraseña" maxlength="15" minlength="8" onpaste="return false;" [(ngModel)]="contrasenia" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).*$" required>
+        <div class="col-12 input-group" *ngIf="viewPassword">
+          <span class="input-group-text" id="inputGroupPrepend">Contraseña</span>
+          <input [type]="verContrasenia ? 'text' : 'password'" class="form-control" name="Contrasenia" id="validacionContrasenia" placeholder="Contraseña123!" maxlength="15" minlength="8" onpaste="return false;" [(ngModel)]="contrasenia" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,15}$" required>
           <div class="invalid-feedback">
-            {{ !contrasenia ? 'Por favor ingrese una contraseña.' : 'La contraseña debe tener al menos 8 caracteres, una mayúscula y un número.' }}
+            {{ !contrasenia ? 'Por favor ingrese una contraseña.' : 'La contraseña debe tener al menos 8 caracteres, una mayúscula, al menos un número y un simbolo especial.' }}
           </div>
           <div class="col-12 mt-2 form-check">
             <input class="form-check-input" type="checkbox" name="checkbox" id="mostrarContrasenia" [(ngModel)]="verContrasenia" (change)="cambiarvistaContrasenia($event)">
@@ -40,7 +43,7 @@
             </label>
           </div>
         </div>
-        <div class="col-12">
+        <div class="col-12 input-group">
           <select class="form-select" name="Rol" id="validacionRol" [(ngModel)]="usuario.rolId" required>
             <option value="" disabled selected>Selecciona un rol</option>
             <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.nombre }}</option>

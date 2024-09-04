@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlertService } from '../services/AlertService';
 import { Expediente } from '../Models/Expediente';
 import { ExpedienteService } from '../services/expediente-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-expedient-list',
@@ -19,13 +20,18 @@ export class ExpedientListComponent implements OnInit {
 
   constructor(
     private expedienteService: ExpedienteService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
     this.getExpedientes();
 
     this.expedienteService.$listaExpedientes.subscribe(data => this.expedientes = data);
+  }
+
+  openDocumentList(expedienteId: number) {
+    this.router.navigate(['/document-list'], { queryParams: { expedienteId: expedienteId } });
   }
 
   seleccionarExpediente(expedienteId: number) {

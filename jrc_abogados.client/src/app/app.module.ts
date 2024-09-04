@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
+import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -24,6 +25,8 @@ import { authGuard } from './services/AuthGuard';
 import { loginGuard } from './services/login-guard';
 import { CreateExpedientComponent } from './create-expedient/create-expedient.component';
 import { ExpedientListComponent } from './expedient-list/expedient-list.component';
+import { DocumentListComponent } from './document-list/document-list.component';
+import { CreateDocumentComponent } from './create-document/create-document.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -43,10 +46,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     CreateReminderComponent,
     ReminderListComponent,
     CreateExpedientComponent,
-    ExpedientListComponent
+    ExpedientListComponent,
+    DocumentListComponent,
+    CreateDocumentComponent
   ],
   imports: [
     RecaptchaModule,
+    NgxMaskDirective,
     RecaptchaFormsModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
@@ -61,11 +67,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       { path: 'appointment-list', component: AppointmentListComponent, canActivate: [authGuard] },
       { path: 'reminder-list', component: ReminderListComponent, canActivate: [authGuard] },
       { path: 'expedient-list', component: ExpedientListComponent, canActivate: [authGuard] },
+      { path: 'document-list', component: DocumentListComponent, canActivate: [authGuard] },
     ]),
     BrowserAnimationsModule,
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    NgxMaskDirective,
+    NgxMaskPipe
   ],
   bootstrap: [AppComponent]
 })
