@@ -224,3 +224,4 @@ C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\obj\Debug\ne
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\obj\Debug\net8.0\JRC_Abogados.Server.pdb
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\obj\Debug\net8.0\JRC_Abogados.Server.genruntimeconfig.cache
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\obj\Debug\net8.0\ref\JRC_Abogados.Server.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\JRC_Abogados.Server.staticwebassets.runtime.json

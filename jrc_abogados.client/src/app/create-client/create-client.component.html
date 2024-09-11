@@ -8,14 +8,14 @@
       <form class="row g-3 needs-validation" name="formularioCliente" novalidate>
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Nombre(s)</span>
-          <input type="text" class="form-control" name="Nombre" id="validacionNombre" placeholder="Ingrese su nombre" minlength="2" maxlength="30" (keydown)="validarTexto($event, 1)" onpaste="return false;" [(ngModel)]="cliente.nombre" required>
+          <input type="text" class="form-control" name="Nombre" id="validacionNombre" placeholder="Ingrese su nombre(s)" minlength="2" maxlength="30" (keydown)="validarTexto($event, 1)" onpaste="return false;" [(ngModel)]="cliente.nombre" required>
           <div class="invalid-feedback">
             {{ !cliente.nombre ? 'Por favor ingrese su nombre.' : 'El nombre debe tener al menos 2 caracteres.' }}
           </div>
         </div>
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Apellido(s)</span>
-          <input type="text" class="form-control" name="Apellido" id="validacionApellido" placeholder="Ingrese su apellido" minlength="3" maxlength="30" (keydown)="validarTexto($event, 2)" onpaste="return false;" [(ngModel)]="cliente.apellido" required>
+          <input type="text" class="form-control" name="Apellido" id="validacionApellido" placeholder="Ingrese su apellido(s)" minlength="3" maxlength="30" (keydown)="validarTexto($event, 2)" onpaste="return false;" [(ngModel)]="cliente.apellido" required>
           <div class="invalid-feedback">
             {{ !cliente.apellido ? 'Por favor ingrese su apellido.' : 'El apellido debe tener al menos 3 caracteres.' }}
           </div>
@@ -51,25 +51,20 @@
           <input type="text" class="form-control"
                  name="Telefono"
                  id="validacionTelefono"
-                 placeholder="Ingrese su numero"
-                 minlength="10"
-                 maxlength="10"
-                 (paste)="limitarNumeros($event)"
-                 (keydown)="limitarNumeros($event)"
+                 placeholder="(00) 0000-0000"
+                 minlength="14"
+                 maxlength="14"
+                 (keydown)="validarTeclas($event)"
                  [(ngModel)]="_telefono"
-                 required>
-          
-          <span class="input-group-text" id="inputGroupPrepend">{{ !telefono ? '(00) 0000-0000' : telefono }}</span>
-          
+                 required>          
           <div class="invalid-feedback">
             {{ !_telefono ? 'Por favor ingrese su telefono.' : 'El telefono debe tener 10 caracteres.' }}
           </div>
         </div>
 
-
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Direccion</span>
-          <input type="text" class="form-control" name="Direccion" id="validacionDireccion" placeholder="Calles o Avenidas, #123" minlength="8" maxlength="40" (keydown)="validarDireccion($event, 1)" [(ngModel)]="cliente.ubicacion.direccion" required>
+          <input type="text" class="form-control" name="Direccion" id="validacionDireccion" placeholder="Calle, #123" minlength="8" maxlength="30" (keydown)="validarDireccion($event, 1)" [(ngModel)]="cliente.ubicacion.direccion" required>
           <div class="invalid-feedback">
             {{ !cliente.ubicacion.direccion ? 'Por favor ingrese su direccion.' : 'Ingrese su ubicacion valida con al menos 8 caracteres.' }}
           </div>

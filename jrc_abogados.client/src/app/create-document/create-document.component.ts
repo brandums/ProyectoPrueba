@@ -13,7 +13,6 @@ import { DocumentoService } from '../services/document-service';
 export class CreateDocumentComponent implements OnInit {
   documento: Documento = new Documento;
   documentoId = 0;
-  tiposDocumento: TipoDocumento[] = [];
   clientes: Cliente[] = [];
   creandoDocumento = false;
   tituloForm = "Crear nuevo Documento";
@@ -25,13 +24,10 @@ export class CreateDocumentComponent implements OnInit {
 
   constructor(
     private documentoService: DocumentoService,
-    private tipoDocumentoService: TipoDocumentoService,
     private alertService: AlertService
   ) { }
 
   ngOnInit(): void {
-    this.tipoDocumentoService.getTipoDeDocumento().subscribe(data => this.tiposDocumento = data);
-
     this.documentoService.$documentoId.subscribe(id => {
       this.documentoId = id;
       if (id != 0) {
@@ -113,7 +109,7 @@ export class CreateDocumentComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', this.archivoSeleccionado as Blob);
     formData.append('nombre', this.documento.nombre);
-    formData.append('tipoDocumentoId', this.documento.tipoDocumentoId);
+    formData.append('descripcion', this.documento.descripcion);
     formData.append('expedienteId', this.documento.expedienteId.toString());
 
     this.documentoService.crearDocumento(formData).subscribe(() => {

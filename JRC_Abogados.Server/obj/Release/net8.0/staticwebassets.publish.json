@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "pS1p1FDJ4jfT8ZtmS8ZrUz9vXu7DpfmJkh8MfLA3lsw=",
+  "Hash": "MPHSUzd2hiI7N/ZsqcxmMjbigdxoaaCAf3jyTXOjmy8=",
   "Source": "JRC_Abogados.Server",
   "BasePath": "_content/JRC_Abogados.Server",
   "Mode": "Default",
@@ -18,7 +18,15 @@
       "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
     }
   ],
-  "DiscoveryPatterns": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "JRC_Abogados.Server\\wwwroot",
+      "Source": "JRC_Abogados.Server",
+      "ContentRoot": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\JRC_Abogados.Server\\wwwroot\\",
+      "BasePath": "_content/JRC_Abogados.Server",
+      "Pattern": "**"
+    }
+  ],
   "Assets": [
     {
       "Identity": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\jrc_abogados.client\\dist\\jrc_abogados.client\\3rdpartylicenses.txt",
@@ -249,12 +257,12 @@
       "OriginalItemSpec": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\jrc_abogados.client\\dist\\jrc_abogados.client\\index.html"
     },
     {
-      "Identity": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\jrc_abogados.client\\dist\\jrc_abogados.client\\main.2c5089060add7b30.js",
+      "Identity": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\jrc_abogados.client\\dist\\jrc_abogados.client\\main.2290a2c334e80178.js",
       "SourceId": "jrc_abogados.client",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\jrc_abogados.client\\dist\\jrc_abogados.client\\",
       "BasePath": "/",
-      "RelativePath": "main.2c5089060add7b30.js",
+      "RelativePath": "main.2290a2c334e80178.js",
       "AssetKind": "Publish",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -265,7 +273,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "PreserveNewest",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\jrc_abogados.client\\dist\\jrc_abogados.client\\main.2c5089060add7b30.js"
+      "OriginalItemSpec": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\jrc_abogados.client\\dist\\jrc_abogados.client\\main.2290a2c334e80178.js"
     },
     {
       "Identity": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\jrc_abogados.client\\dist\\jrc_abogados.client\\polyfills.2247ba98e3e36334.js",
@@ -342,6 +350,25 @@
       "CopyToOutputDirectory": "PreserveNewest",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\jrc_abogados.client\\dist\\jrc_abogados.client\\styles.95e9582c6bd1298d.css"
+    },
+    {
+      "Identity": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\JRC_Abogados.Server\\wwwroot\\uploads\\Top Notch 3rd Edition Fundamentals B With Workbook_c25f412f-ceb9-4422-884a-1372b2d2d765.pdf",
+      "SourceId": "JRC_Abogados.Server",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\brran\\OneDrive\\Escritorio\\JRC_Abogados\\JRC_Abogados.Server\\wwwroot\\",
+      "BasePath": "_content/JRC_Abogados.Server",
+      "RelativePath": "uploads/Top Notch 3rd Edition Fundamentals B With Workbook_c25f412f-ceb9-4422-884a-1372b2d2d765.pdf",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\Top Notch 3rd Edition Fundamentals B With Workbook_c25f412f-ceb9-4422-884a-1372b2d2d765.pdf"
     }
   ]
 }

@@ -7,8 +7,7 @@ export class Documento {
   nombre: string = "";
   path: string = "";
   fechaInicio: string = "";
-  tipoDocumentoId = "";
-  tipoDocumento: TipoDocumento = new TipoDocumento;
+  descripcion: string = "";
   clienteId = "";
   cliente: Cliente = new Cliente;
   expedienteId = 0;

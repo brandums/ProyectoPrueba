@@ -1,0 +1,20 @@
+﻿<Project>
+  <ItemGroup>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\Top Notch 3rd Edition Fundamentals B With Workbook_c25f412f-ceb9-4422-884a-1372b2d2d765.pdf))">
+      <SourceType>Package</SourceType>
+      <SourceId>JRC_Abogados.Server</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/JRC_Abogados.Server</BasePath>
+      <RelativePath>uploads/Top Notch 3rd Edition Fundamentals B With Workbook_c25f412f-ceb9-4422-884a-1372b2d2d765.pdf</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath($(MSBuildThisFileDirectory)..\staticwebassets\uploads\Top Notch 3rd Edition Fundamentals B With Workbook_c25f412f-ceb9-4422-884a-1372b2d2d765.pdf))</OriginalItemSpec>
+    </StaticWebAsset>
+  </ItemGroup>
+</Project>

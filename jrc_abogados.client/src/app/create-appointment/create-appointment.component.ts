@@ -168,7 +168,18 @@ export class CreateAppointmentComponent implements OnInit {
     });
   }
 
+  getUbication() {
+    this.cita.ubicacion.direccion = "null";
+    this.cita.ubicacion.ciudad = "null";
+    this.cita.ubicacion.estado = "null";
+    this.cita.ubicacion.codigoPostal = "0";
+  }
+
   crearCita() {
+    if (this.cita.tipoCita != "Presencial") {
+      this.getUbication();
+    }
+    
     this.creandoCita = true;
     this.ubicacionService.crearUbicacion(this.cita.ubicacion).subscribe(ubicacion => {
       this.cita.ubicacionId = ubicacion.id;
@@ -187,6 +198,10 @@ export class CreateAppointmentComponent implements OnInit {
   }
 
   actualizarCita() {
+    if (this.cita.tipoCita != "Presencial") {
+      this.getUbication();
+    }
+
     this.creandoCita = true;
     this.ubicacionService.actualizarUbicacion(this.cita.ubicacionId, this.cita.ubicacion).subscribe(() => {
       this.citaService.actualizarCita(this.citaId, this.cita).subscribe(() => {

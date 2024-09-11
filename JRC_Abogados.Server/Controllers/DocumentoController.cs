@@ -28,7 +28,6 @@ namespace JRC_Abogados.Server.Controllers
 
             foreach (var documento in documentos)
             {
-                documento.TipoDocumento = await _context.TipoDocumento.FindAsync(documento.TipoDocumentoId);
                 documento.Cliente = await _context.Cliente.FindAsync(documento.ClienteId);
             }
 
@@ -45,7 +44,6 @@ namespace JRC_Abogados.Server.Controllers
                 return NotFound();
             }
 
-            documento.TipoDocumento = await _context.TipoDocumento.FindAsync(documento.TipoDocumentoId);
             documento.Cliente = await _context.Cliente.FindAsync(documento.ClienteId);
 
             return documento;
@@ -105,7 +103,6 @@ namespace JRC_Abogados.Server.Controllers
             var documento = new Documento
             {
                 Nombre = documentoDTO.Nombre,
-                TipoDocumentoId = documentoDTO.TipoDocumentoId,
                 ExpedienteId = documentoDTO.ExpedienteId,
                 FechaInicio = DateTime.Now,
             };

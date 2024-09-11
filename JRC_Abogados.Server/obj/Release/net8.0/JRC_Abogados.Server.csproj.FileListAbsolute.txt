@@ -224,3 +224,4 @@ C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Release\
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Release\net8.0\zh-Hant\Microsoft.TestPlatform.CommunicationUtilities.resources.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Release\net8.0\zh-Hant\Microsoft.TestPlatform.CrossPlatEngine.resources.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Release\net8.0\zh-Hant\Microsoft.VisualStudio.TestPlatform.Common.resources.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Release\net8.0\JRC_Abogados.Server.staticwebassets.runtime.json

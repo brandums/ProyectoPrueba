@@ -127,6 +127,63 @@ export class CreateClientComponent implements OnInit {
       }
     }
   }
+
+  validarTeclas(event: KeyboardEvent) {
+    const input = event.target as HTMLInputElement;
+    const teclaPresionada = event.key;
+    const valorActual = input.value;
+    const posicionCursor = input.selectionStart ?? 0;
+
+    // Permitir teclas especiales como backspace, delete, flechas
+    const teclasEspeciales = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+
+    // Permitir solo números, paréntesis, espacio y guion medio
+    const patron = /^[0-9() \-]$/;
+
+    // Verificar si la tecla presionada es válida
+    if (!patron.test(teclaPresionada) && !teclasEspeciales.includes(teclaPresionada)) {
+      event.preventDefault();
+      return;
+    }
+
+    if (teclaPresionada === '(' && posicionCursor !== 0) {
+      event.preventDefault();
+      return;
+    }
+
+    if (teclaPresionada === ')' && posicionCursor !== 3) {
+      event.preventDefault();
+      return;
+    }
+
+    // Validar posiciones específicas para caracteres especiales
+    if (teclaPresionada === ' ' && posicionCursor !== 4) {
+      event.preventDefault();
+      return;
+    }
+
+    if (teclaPresionada === '-' && posicionCursor !== 9) {
+      event.preventDefault();
+      return;
+    }
+
+    if (/[0-9]/.test(teclaPresionada) && (posicionCursor === 0 || posicionCursor === 3 || posicionCursor === 4 || posicionCursor === 9)) {
+      event.preventDefault();
+      return;
+    }
+
+    // Validar longitud máxima permitida
+    if (valorActual.length >= 14 && !teclasEspeciales.includes(teclaPresionada)) {
+      event.preventDefault();
+      return;
+    }
+  }
+
+
+
+
+
+
   
   formatPhone(value: string): string {
     if (value.length != 0) {

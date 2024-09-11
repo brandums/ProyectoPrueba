@@ -78,11 +78,11 @@
         <p><strong>Description:</strong> {{ citaSeleccionada?.notas }}</p>
         <p><strong>Fecha de Inicio:</strong> {{ citaSeleccionada?.fechaInicio }}</p>
         <p><strong>Hora:</strong> {{ citaSeleccionada?.hora }}</p>
-        <p><strong>Ubicacion de la Cita.</strong></p>
-        <p><strong>Direccion del Caso:</strong> {{ citaSeleccionada?.ubicacion?.direccion }}</p>
-        <p><strong>Estado:</strong> {{ citaSeleccionada?.ubicacion?.estado }}</p>
-        <p><strong>Ciudad:</strong> {{ citaSeleccionada?.ubicacion?.ciudad }}</p>
-        <p><strong>Codigo Postal:</strong> {{ citaSeleccionada?.ubicacion?.codigoPostal }}</p>
+        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Ubicacion de la Cita.</strong></p>
+        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Direccion del Caso:</strong> {{ citaSeleccionada?.ubicacion?.direccion }}</p>
+        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Estado:</strong> {{ citaSeleccionada?.ubicacion?.estado }}</p>
+        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Ciudad:</strong> {{ citaSeleccionada?.ubicacion?.ciudad }}</p>
+        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Codigo Postal:</strong> {{ citaSeleccionada?.ubicacion?.codigoPostal }}</p>
         <p><strong>Datos del Cliente.</strong></p>
         <p><strong>Nombre Cliente:</strong> {{ citaSeleccionada?.cliente.nombre }}</p>
         <p><strong>Apellido Cliente:</strong> {{ citaSeleccionada?.cliente.apellido }}</p>

@@ -95,7 +95,7 @@ export class CreateCaseComponent implements OnInit {
 
   limitarAlfanumerico(event: KeyboardEvent | ClipboardEvent) {
     const teclaPresionada = (event as KeyboardEvent).key;
-    const patron = /^[a-zA-Z0-9]$/;
+    const patron = /^[a-zA-Z0-9\/\-]$/;
 
     if (event instanceof KeyboardEvent) {
       if (!patron.test(teclaPresionada) && teclaPresionada !== 'Backspace' && teclaPresionada !== 'Delete' && teclaPresionada !== 'ArrowLeft' && teclaPresionada !== 'ArrowRight') {
@@ -105,7 +105,7 @@ export class CreateCaseComponent implements OnInit {
 
     if (event instanceof ClipboardEvent) {
       const textoPegado = event.clipboardData?.getData('text') || '';
-      if (!/^[a-zA-Z0-9]+$/.test(textoPegado)) {
+      if (!/^[a-zA-Z0-9\/\-]+$/.test(textoPegado)) {
         event.preventDefault();
       }
     }
@@ -129,17 +129,20 @@ export class CreateCaseComponent implements OnInit {
   validarTexto(event: KeyboardEvent, minChars: number) {
     const teclaPresionada = event.key;
     const valorActual = (event.target as HTMLInputElement).value;
-
-    if (valorActual.length <= minChars && teclaPresionada === ' ') {
+    
+    const caracteresEspeciales = [' ', '/', '-'];
+    
+    if (valorActual.length <= minChars && caracteresEspeciales.includes(teclaPresionada)) {
       event.preventDefault();
       return;
     }
-
-    if (valorActual.slice(-1) === ' ' && teclaPresionada === ' ') {
+    
+    if (caracteresEspeciales.includes(valorActual.slice(-1)) && caracteresEspeciales.includes(teclaPresionada)) {
       event.preventDefault();
       return;
     }
   }
+
 
   iniciarValidadores() {
     const forms = document.querySelectorAll('.needs-validation');
@@ -224,6 +227,7 @@ export class CreateCaseComponent implements OnInit {
     this.tituloForm = "Crear nuevo Caso"
     this.formValidado = false;
     this.errorMensaje = null;
+    this.creandoCaso = false;
 
     const forms = document.querySelectorAll('.needs-validation');
     Array.from(forms).forEach((form: Element) => {

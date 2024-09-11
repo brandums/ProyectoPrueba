@@ -15,20 +15,18 @@
         </div>
 
         <div class="col-12 input-group">
-          <span class="input-group-text" id="inputGroupPrepend">Tipo de documento</span>
-          <select class="form-select" name="TipoDocumento" id="validacionTipoDocumento" [(ngModel)]="documento.tipoDocumentoId" required>
-            <option value="" disabled selected>Selecciona el tipo</option>
-            <option *ngFor="let tipoDocumento of tiposDocumento" [value]="tipoDocumento.id">{{ tipoDocumento.nombre }}</option>
-          </select>
+          <span class="input-group-text" id="inputGroupPrepend">Descripción</span>
+          <input type="text" class="form-control" name="descripcion" id="validacionDescripcion" placeholder="Ingrese descripción del documento" minlength="5" maxlength="40" (keydown)="validarTexto($event, 1)" [(ngModel)]="documento.descripcion" required>
           <div class="invalid-feedback">
-            Por favor seleccion un tipo de Documento.
+            {{ !documento.descripcion ? 'Por favor ingrese la descripción del documento.' : 'Ingrese una descripción mas completo con al menos 5 caracteres.' }}
           </div>
         </div>
 
         <div class="col-12 input-group" *ngIf="!documentoId">
-          <input type="file" class="form-control" name="archivo" id="validacionArchivo" (change)="onFileSelected($event)" accept="application/pdf" required>
+          <input type="file" class="form-control" name="archivo" id="validacionArchivo"  (change)="onFileSelected($event)" accept="application/pdf" required>
+          <span class="input-group-text" id="inputGroupPrepend">PDF.</span>
           <div class="invalid-feedback">
-            Por favor seleccione un archivo.
+            Por favor seleccione un archivo PDF.
           </div>
         </div>
 
