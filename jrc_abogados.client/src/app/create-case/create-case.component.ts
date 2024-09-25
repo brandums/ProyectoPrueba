@@ -11,6 +11,7 @@ import { Cliente } from '../Models/Cliente';
 import { ClienteService } from '../services/cliente-service';
 import { CityStateService } from '../services/city-state.service';
 import { AlertService } from '../services/AlertService';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-create-case',
@@ -18,6 +19,7 @@ import { AlertService } from '../services/AlertService';
   styleUrls: ['./create-case.component.css']
 })
 export class CreateCaseComponent implements OnInit {
+  user: any;
   caso: Caso = new Caso;
   casoId = 0;
   tiposCaso: TipoCaso[] = [];
@@ -29,6 +31,7 @@ export class CreateCaseComponent implements OnInit {
   errorMensaje: string | null = null;
 
   estadosUbi: string[] = [];
+  estadoActual: string = "";
   ciudades: string[] = [];
 
   constructor(
@@ -39,10 +42,15 @@ export class CreateCaseComponent implements OnInit {
     private tipoCasoService: TipoCasoService,
     private estadoService: EstadoService,
     private cityStateService: CityStateService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.tipoCasoService.getTipoDeCasos().subscribe(data => this.tiposCaso = data);
     this.estadoService.getEstados().subscribe(data => this.estados = data);
     this.clienteService.getClientes().subscribe(data => this.clientes = data);
@@ -52,6 +60,7 @@ export class CreateCaseComponent implements OnInit {
       if (id != 0) {
         this.casoService.getCaso(id).subscribe(data => {
           this.caso = data;
+          this.estadoActual = data.ubicacion.estado;
           this.onStateChange(this.caso.ubicacion.estado);
         })
         this.tituloForm = "Actualizar datos del Caso"
@@ -67,6 +76,10 @@ export class CreateCaseComponent implements OnInit {
   }
 
   onStateChange(state: string): void {
+    if (state !== this.estadoActual) {
+      this.caso.ubicacion.ciudad = "";
+    }
+
     this.cityStateService.getCitiesByState(state).subscribe(ciudades => {
       this.ciudades = ciudades;
 
@@ -181,6 +194,7 @@ export class CreateCaseComponent implements OnInit {
       this.ubicacionService.crearUbicacion(this.caso.ubicacion).subscribe(ubicacion => {
         this.caso.ubicacionId = ubicacion.id;
         this.caso.juzgadoId = juzgado.id;
+        this.caso.empleadoId = this.user.id;
 
         this.casoService.crearCaso(this.caso).subscribe(() => {
           this.casoService.nuevoCaso();
@@ -199,19 +213,66 @@ export class CreateCaseComponent implements OnInit {
 
   actualizarCaso() {
     this.creandoCaso = true;
-    this.juzgadoService.actualizarJuzgado(this.caso.juzgadoId, this.caso.juzgado).subscribe(() => {
-      this.ubicacionService.actualizarUbicacion(this.caso.ubicacionId, this.caso.ubicacion).subscribe(() => {
-        this.casoService.actualizarCaso(this.casoId, this.caso).subscribe(() => {
-          this.casoService.nuevoCaso();
 
-          this.cerrarForm();
-          this.creandoCaso = false;
-          this.alertService.showMessage('Caso actualizado con exito.');
+    this.juzgadoService.getJuzgado(this.caso.juzgadoId).subscribe(juzgadoOriginal => {
+      let juzgadoCambiado =
+        juzgadoOriginal.nombre !== this.caso.juzgado.nombre ||
+        juzgadoOriginal.numeroExpediente !== this.caso.juzgado.numeroExpediente;
+
+      if (juzgadoCambiado) {
+        this.juzgadoService.crearJuzgado(this.caso.juzgado).subscribe(juzgado => {
+          this.caso.juzgadoId = juzgado.id;
+
+          this.actualizarUbicacionYCaso();
         }, () => {
           this.creandoCaso = false;
           this.formValidado = false;
-        })
-      })
+        });
+      } else {
+        this.actualizarUbicacionYCaso();
+      }
+    }, () => {
+      this.creandoCaso = false;
+      this.formValidado = false;
+    });
+  }
+
+  private actualizarUbicacionYCaso() {
+    this.ubicacionService.getUbicacion(this.caso.ubicacionId).subscribe(ubicacionOriginal => {
+      let ubicacionCambiada =
+        ubicacionOriginal.direccion !== this.caso.ubicacion.direccion ||
+        ubicacionOriginal.ciudad !== this.caso.ubicacion.ciudad ||
+        ubicacionOriginal.estado !== this.caso.ubicacion.estado ||
+        ubicacionOriginal.codigoPostal !== this.caso.ubicacion.codigoPostal;
+
+      if (ubicacionCambiada) {
+        this.ubicacionService.crearUbicacion(this.caso.ubicacion).subscribe(ubicacion => {
+          this.caso.ubicacionId = ubicacion.id;
+
+          this.actualizarDatosCaso();
+        }, () => {
+          this.creandoCaso = false;
+          this.formValidado = false;
+        });
+      } else {
+        this.actualizarDatosCaso();
+      }
+    }, () => {
+      this.creandoCaso = false;
+      this.formValidado = false;
+    });
+  }
+
+  private actualizarDatosCaso() {
+    this.casoService.actualizarCaso(this.casoId, this.user.id, this.caso).subscribe(() => {
+      this.casoService.nuevoCaso();
+
+      this.cerrarForm();
+      this.creandoCaso = false;
+      this.alertService.showMessage('Caso actualizado con exito.');
+    }, () => {
+      this.creandoCaso = false;
+      this.formValidado = false;
     })
   }
 

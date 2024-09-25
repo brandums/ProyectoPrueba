@@ -40,6 +40,7 @@ namespace JRC_Abogados.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Juzgado>> PostJuzgado(Juzgado juzgado)
         {
+            juzgado.Id = 0;
             _context.Juzgado.Add(juzgado);
             await _context.SaveChangesAsync();
 

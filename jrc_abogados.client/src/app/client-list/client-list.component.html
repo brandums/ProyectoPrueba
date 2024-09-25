@@ -21,11 +21,11 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>Mas</th>
+        <th>Más</th>
         <th>Nombre</th>
         <th>Apellido</th>
         <th>Email</th>
-        <th>Telefono</th>
+        <th>Teléfono</th>
       </tr>
     </thead>
     <tbody>
@@ -73,12 +73,12 @@
         <p><strong>Nombre:</strong> {{ clienteSeleccionado?.nombre }}</p>
         <p><strong>Apellido:</strong> {{ clienteSeleccionado?.apellido }}</p>
         <p><strong>Email:</strong> {{ clienteSeleccionado?.correoElectronico }}</p>
-        <p><strong>Telefono:</strong> {{ clienteSeleccionado?.telefono }}</p>
+        <p><strong>Teléfono:</strong> {{ clienteSeleccionado?.telefono }}</p>
         <p><strong>Fecha Nacimiento:</strong> {{ clienteSeleccionado?.fechaNacimiento }}</p>
-        <p><strong>Direccion:</strong> {{ clienteSeleccionado?.ubicacion?.direccion }}</p>
+        <p><strong>Dirección:</strong> {{ clienteSeleccionado?.ubicacion?.direccion }}</p>
         <p><strong>Estado:</strong> {{ clienteSeleccionado?.ubicacion?.estado }}</p>
         <p><strong>Ciudad:</strong> {{ clienteSeleccionado?.ubicacion?.ciudad }}</p>
-        <p><strong>Codigo Postal:</strong> {{ clienteSeleccionado?.ubicacion?.codigoPostal }}</p>
+        <p><strong>Código Postal:</strong> {{ clienteSeleccionado?.ubicacion?.codigoPostal }}</p>
       </div>
       <div class="modal-footer">
         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirm-delete-modal">Eliminar</button>
@@ -98,7 +98,7 @@
       </div>
       <div class="modal-body">
         <p>¿Estás seguro de que deseas eliminar al cliente {{ clienteSeleccionado?.nombre }} {{ clienteSeleccionado?.apellido }}?</p>
-        <p>Se perderan todos los datos relacionados al cliente, tanto: <span>Casos, Citas, Reportes</span>.</p>
+        <p>Se perderán todos los datos relacionados al cliente, incluidos: <span>Casos, Citas, Reportes</span>.</p>
       </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

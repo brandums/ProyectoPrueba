@@ -6,6 +6,13 @@ import { RouterModule } from '@angular/router';
 import { RecaptchaModule, RecaptchaFormsModule } from 'ng-recaptcha';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+
+
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
@@ -28,6 +35,8 @@ import { ExpedientListComponent } from './expedient-list/expedient-list.componen
 import { DocumentListComponent } from './document-list/document-list.component';
 import { CreateDocumentComponent } from './create-document/create-document.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ReportListComponent } from './report-list/report-list.component';
+import { CreateReportComponent } from './create-report/create-report.component';
 
 @NgModule({
   declarations: [
@@ -48,9 +57,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     CreateExpedientComponent,
     ExpedientListComponent,
     DocumentListComponent,
-    CreateDocumentComponent
+    CreateDocumentComponent,
+    CreateReportComponent,
+    ReportListComponent
   ],
   imports: [
+    MatButtonModule,
+    MatToolbarModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+
     RecaptchaModule,
     NgxMaskDirective,
     RecaptchaFormsModule,
@@ -68,6 +85,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       { path: 'reminder-list', component: ReminderListComponent, canActivate: [authGuard] },
       { path: 'expedient-list', component: ExpedientListComponent, canActivate: [authGuard] },
       { path: 'document-list', component: DocumentListComponent, canActivate: [authGuard] },
+      { path: 'report-list', component: ReportListComponent, canActivate: [authGuard] }
     ]),
     BrowserAnimationsModule,
   ],

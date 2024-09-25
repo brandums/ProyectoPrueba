@@ -46,12 +46,12 @@ export class ClienteService {
     );
   }
 
-  actualizarCliente(id: number, cliente: Cliente): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, cliente);
+  actualizarCliente(id: number, empleadoId: number, cliente: Cliente): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}/${empleadoId}`, cliente);
   }
 
-  eliminarCliente(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+  eliminarCliente(id: number, empleadoId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}/${empleadoId}`);
   }
 
   nuevoCliente() {

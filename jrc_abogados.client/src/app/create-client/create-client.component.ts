@@ -4,12 +4,14 @@ import { Cliente } from '../Models/Cliente';
 import { UbicacionService } from '../services/ubicacion-service';
 import { CityStateService } from '../services/city-state.service';
 import { AlertService } from '../services/AlertService';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-create-client',
   templateUrl: './create-client.component.html'
 })
 export class CreateClientComponent implements OnInit {
+  user: any;
   cliente: Cliente = new Cliente;
   clienteId = 0;
   extencionEmail = "gmail";
@@ -21,16 +23,22 @@ export class CreateClientComponent implements OnInit {
   errorMensaje: string | null = null;
 
   estados: string[] = [];
+  estadoActual: string = "";
   ciudades: string[] = [];
 
   constructor(
     private clienteService: ClienteService,
     private ubicacionService: UbicacionService,
     private cityStateService: CityStateService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.clienteService.$clienteId.subscribe(id => {
       this.clienteId = id;
       if (id != 0) {
@@ -40,6 +48,8 @@ export class CreateClientComponent implements OnInit {
           this.nickEmail = partesEmail[0];
           this.extencionEmail = partesEmail[1].split('.')[0];
           this.extencionEmail2 = partesEmail[1].split('.')[1];
+          this._telefono = data.telefono;
+          this.estadoActual = data.ubicacion.estado;
           this.onStateChange(this.cliente.ubicacion.estado);
         })
         this.tituloForm = "Actualizar datos del Cliente"
@@ -55,6 +65,10 @@ export class CreateClientComponent implements OnInit {
   }
 
   onStateChange(state: string): void {
+    if (state !== this.estadoActual) {
+      this.cliente.ubicacion.ciudad = "";
+    }
+
     this.cityStateService.getCitiesByState(state).subscribe(ciudades => {
       this.ciudades = ciudades;
       
@@ -134,13 +148,10 @@ export class CreateClientComponent implements OnInit {
     const valorActual = input.value;
     const posicionCursor = input.selectionStart ?? 0;
 
-    // Permitir teclas especiales como backspace, delete, flechas
     const teclasEspeciales = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
-
-    // Permitir solo números, paréntesis, espacio y guion medio
+    
     const patron = /^[0-9() \-]$/;
-
-    // Verificar si la tecla presionada es válida
+    
     if (!patron.test(teclaPresionada) && !teclasEspeciales.includes(teclaPresionada)) {
       event.preventDefault();
       return;
@@ -155,8 +166,7 @@ export class CreateClientComponent implements OnInit {
       event.preventDefault();
       return;
     }
-
-    // Validar posiciones específicas para caracteres especiales
+    
     if (teclaPresionada === ' ' && posicionCursor !== 4) {
       event.preventDefault();
       return;
@@ -171,18 +181,12 @@ export class CreateClientComponent implements OnInit {
       event.preventDefault();
       return;
     }
-
-    // Validar longitud máxima permitida
+    
     if (valorActual.length >= 14 && !teclasEspeciales.includes(teclaPresionada)) {
       event.preventDefault();
       return;
     }
   }
-
-
-
-
-
 
   
   formatPhone(value: string): string {
@@ -278,6 +282,7 @@ export class CreateClientComponent implements OnInit {
 
     this.ubicacionService.crearUbicacion(this.cliente.ubicacion).subscribe(data => {
       this.cliente.ubicacionId = data.id;
+      this.cliente.empleadoId = this.user.id;
 
       this.clienteService.crearCliente(this.cliente).subscribe(() => {
         this.clienteService.nuevoCliente();
@@ -297,17 +302,38 @@ export class CreateClientComponent implements OnInit {
     this.unirEmail();
     this.cliente.telefono = this._telefono;
 
-    this.ubicacionService.actualizarUbicacion(this.cliente.ubicacionId, this.cliente.ubicacion).subscribe(() => {
-      this.clienteService.actualizarCliente(this.clienteId, this.cliente).subscribe(() => {
-        this.clienteService.nuevoCliente();
+    this.ubicacionService.getUbicacion(this.cliente.ubicacionId).subscribe(ubicacionOriginal => {
+      if (ubicacionOriginal.direccion !== this.cliente.ubicacion.direccion ||
+        ubicacionOriginal.ciudad !== this.cliente.ubicacion.ciudad ||
+        ubicacionOriginal.estado !== this.cliente.ubicacion.estado ||
+        ubicacionOriginal.codigoPostal !== this.cliente.ubicacion.codigoPostal) {
+        this.ubicacionService.crearUbicacion(this.cliente.ubicacion).subscribe(ubicacion => {
+          this.cliente.ubicacionId = ubicacion.id;
 
-        this.cerrarForm();
-        this.creandoCliente = false;
-        this.alertService.showMessage('Cliente actualizado con exito.');
-      }, () => {
-        this.creandoCliente = false;
-        this.formValidado = false;
-      })
+          this.actualizarDatosCliente();
+        }, () => {
+          this.creandoCliente = false;
+          this.formValidado = false;
+        });
+      } else {
+        this.actualizarDatosCliente();
+      }
+    }, () => {
+      this.creandoCliente = false;
+      this.formValidado = false;
+    });
+  }
+
+  private actualizarDatosCliente() {
+    this.clienteService.actualizarCliente(this.clienteId, this.user.id, this.cliente).subscribe(() => {
+      this.clienteService.nuevoCliente();
+
+      this.cerrarForm();
+      this.creandoCliente = false;
+      this.alertService.showMessage('Cliente actualizado con exito.');
+    }, () => {
+      this.creandoCliente = false;
+      this.formValidado = false;
     })
   }
 

@@ -1,9 +1,11 @@
 ﻿using JRC_Abogados.Server.DataBaseContext;
 using JRC_Abogados.Server.Models;
+using JRC_Abogados.Server.Models.audits;
 using JRC_Abogados.Server.Models.EmailHelper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace JRC_Abogados.Server.Controllers
 {
@@ -111,6 +113,27 @@ namespace JRC_Abogados.Server.Controllers
             _context.Caso.Add(caso);
             await _context.SaveChangesAsync();
 
+            var auditoria = new CasoAudit
+            {
+                CasoId = caso.Id,
+                TipoCasoId = caso.TipoCasoId,
+                JuzgadoId = caso.JuzgadoId,
+                UbicacionId = caso.UbicacionId,
+                Descripcion = caso.Descripcion,
+                FechaInicio = caso.FechaInicio,
+                FechaTermino = caso.FechaTermino,
+                EstadoId = caso.EstadoId,
+                ClienteId = caso.ClienteId,
+                EmpleadoId = caso.EmpleadoId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "CREAR",
+                EmpleadoAccionId = caso.EmpleadoId,
+                DetallesAccion = "Caso creado"
+            };
+
+            _context.CasoAudit.Add(auditoria);
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction("GetCaso", new { id = caso.Id }, caso);
         }
 
@@ -131,32 +154,125 @@ namespace JRC_Abogados.Server.Controllers
             await _emailSender.SendEmailAsync(caso.Cliente.CorreoElectronico, emailSubject, emailBody);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCaso(int id, Caso caso)
+        [HttpPut("{id}/{empleadoId}")]
+        public async Task<IActionResult> PutCaso(int id, int empleadoId, Caso caso)
         {
             if (id != caso.Id)
             {
                 return BadRequest();
             }
 
-            var caseExisting = await _context.Caso.FindAsync(id);
-
-            if (caseExisting.EstadoId != caso.EstadoId)
+            var casoActual = await _context.Caso.FindAsync(id);
+            if (casoActual == null)
             {
-                caso.Cliente = await _context.Cliente.FindAsync(caso.ClienteId);
-                caso.Estado = await _context.Estado.FindAsync(caso.EstadoId);
-                SendStatusEmail(caso);
+                return NotFound();
             }
 
-            _context.Entry(caseExisting).CurrentValues.SetValues(caso);
+            var detallesAccion = new StringBuilder();
+
+            if (casoActual.TipoCasoId != caso.TipoCasoId)
+            {
+                var tipoCasoActual = await _context.TipoCaso.FindAsync(casoActual.TipoCasoId);
+                var tipoCaso = await _context.TipoCaso.FindAsync(caso.TipoCasoId);
+                detallesAccion.AppendLine($"Tipo de caso cambiado de '{tipoCasoActual.Nombre}' a '{tipoCaso.Nombre}'");
+            }
+            if (casoActual.JuzgadoId != caso.JuzgadoId)
+            {
+                casoActual.Juzgado = await _context.Juzgado.FindAsync(casoActual.JuzgadoId);
+                caso.Juzgado = await _context.Juzgado.FindAsync(caso.JuzgadoId);
+                if (casoActual.Juzgado.Nombre != caso.Juzgado.Nombre)
+                {
+                    detallesAccion.AppendLine($"Nombre de Juzgado cambiada de '{casoActual.Juzgado.Nombre}' a '{caso.Juzgado.Nombre}'");
+                }
+                if (casoActual.Juzgado.NumeroExpediente != caso.Juzgado.NumeroExpediente)
+                {
+                    detallesAccion.AppendLine($"Numero de Expediente cambiado de '{casoActual.Juzgado.NumeroExpediente}' a '{caso.Juzgado.NumeroExpediente}'");
+                }
+            }
+            if (casoActual.UbicacionId != caso.UbicacionId)
+            {
+                casoActual.Ubicacion = await _context.Ubicacion.FindAsync(casoActual.UbicacionId);
+                caso.Ubicacion = await _context.Ubicacion.FindAsync(caso.UbicacionId);
+                if (casoActual.Ubicacion.Direccion != caso.Ubicacion.Direccion)
+                {
+                    detallesAccion.AppendLine($"Direccion cambiada de '{casoActual.Ubicacion.Direccion}' a '{caso.Ubicacion.Direccion}'");
+                }
+                if (casoActual.Ubicacion.Estado != caso.Ubicacion.Estado)
+                {
+                    detallesAccion.AppendLine($"Estado cambiada de '{casoActual.Ubicacion.Estado}' a '{caso.Ubicacion.Estado}'");
+                }
+                if (casoActual.Ubicacion.Ciudad != caso.Ubicacion.Ciudad)
+                {
+                    detallesAccion.AppendLine($"Ciudad cambiada de '{casoActual.Ubicacion.Ciudad}' a '{caso.Ubicacion.Ciudad}'");
+                }
+                if (casoActual.Ubicacion.CodigoPostal != caso.Ubicacion.CodigoPostal)
+                {
+                    detallesAccion.AppendLine($"Codigo Postal cambiada de '{casoActual.Ubicacion.CodigoPostal}' a '{caso.Ubicacion.CodigoPostal}'");
+                }
+            }
+            if (casoActual.Descripcion != caso.Descripcion)
+            {
+                detallesAccion.AppendLine($"Descripción cambiado de '{casoActual.Descripcion}' a '{caso.Descripcion}'");
+            }
+            if (casoActual.EstadoId != caso.EstadoId)
+            {
+                var estadoActual = await _context.Estado.FindAsync(casoActual.EstadoId);
+                var estado = await _context.Estado.FindAsync(caso.EstadoId);
+                caso.Cliente = await _context.Cliente.FindAsync(caso.ClienteId);
+                caso.Estado = estado;
+                SendStatusEmail(caso);
+                detallesAccion.AppendLine($"Estado cambiado de '{estadoActual.Nombre}' a '{estado.Nombre}'");
+            }
+            if (casoActual.ClienteId != caso.ClienteId)
+            {
+                var clienteActual = await _context.Cliente.FindAsync(casoActual.ClienteId);
+                var cliente = await _context.Estado.FindAsync(caso.ClienteId);
+                detallesAccion.AppendLine($"Cliente cambiado de '{clienteActual.Nombre}' a '{cliente.Nombre}'");
+            }
 
             caso.Cliente = null;
             caso.Estado = null;
             caso.Juzgado = null;
             caso.TipoCaso = null;
             caso.Ubicacion = null;
+            _context.Entry(casoActual).CurrentValues.SetValues(caso);
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                var auditoria = new CasoAudit
+                {
+                    CasoId = casoActual.Id,
+                    TipoCasoId = caso.TipoCasoId,
+                    JuzgadoId = caso.JuzgadoId,
+                    UbicacionId = caso.UbicacionId,
+                    Descripcion = caso.Descripcion,
+                    FechaInicio = caso.FechaInicio,
+                    FechaTermino = caso.FechaTermino,
+                    EstadoId = caso.EstadoId,
+                    ClienteId = caso.ClienteId,
+                    EmpleadoId = caso.EmpleadoId,
+                    FechaAccion = DateTime.Now,
+                    TipoAccion = "ACTUALIZAR",
+                    EmpleadoAccionId = empleadoId,
+                    DetallesAccion = detallesAccion.ToString()
+                };
+
+                _context.CasoAudit.Add(auditoria);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CasoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             return Ok();
         }
@@ -173,8 +289,8 @@ namespace JRC_Abogados.Server.Controllers
             await _emailSender.SendEmailAsync(caso.Cliente.CorreoElectronico, emailSubject, emailBody);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCaso(int id)
+        [HttpDelete("{id}/{empleadoId}")]
+        public async Task<IActionResult> DeleteCaso(int id, int empleadoId)
         {
             var caso = await _context.Caso.FindAsync(id);
             if (caso == null)
@@ -182,7 +298,27 @@ namespace JRC_Abogados.Server.Controllers
                 return NotFound();
             }
 
+            var auditoria = new CasoAudit
+            {
+                CasoId = caso.Id,
+                TipoCasoId = caso.TipoCasoId,
+                JuzgadoId = caso.JuzgadoId,
+                UbicacionId = caso.UbicacionId,
+                Descripcion = caso.Descripcion,
+                FechaInicio = caso.FechaInicio,
+                FechaTermino = caso.FechaTermino,
+                EstadoId = caso.EstadoId,
+                ClienteId = caso.ClienteId,
+                EmpleadoId = caso.EmpleadoId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "ELIMINAR",
+                EmpleadoAccionId = empleadoId,
+                DetallesAccion = "Caso eliminado"
+            };
+
             _context.Caso.Remove(caso);
+            _context.CasoAudit.Add(auditoria);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

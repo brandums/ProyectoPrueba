@@ -9,5 +9,7 @@ export class Cliente {
   correoElectronico: string = "";
   ubicacionId: number = 0;
   ubicacion: Ubicacion = new Ubicacion;
+  empleadoId: number = 0;
+  empleado: any;
   [key: string]: any;
 }

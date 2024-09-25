@@ -7,5 +7,7 @@
         public int TipoExpedienteId { get; set; }
         public int ClienteId { get; set; }
         public int? CasoId { get; set; }
+        public int EmpleadoId { get; set; }
+
     }
 }

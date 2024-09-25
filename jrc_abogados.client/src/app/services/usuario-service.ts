@@ -23,8 +23,8 @@ export class UsuarioService {
     return this.http.get<Usuario>(`${this.baseUrl}/${id}`);
   }
 
-  crearUsuario(usuario: Usuario): Observable<Usuario> {
-    return this.http.post<Usuario>(`${this.baseUrl}`, usuario).pipe(
+  crearUsuario(empleadoId: number, usuario: Usuario): Observable<Usuario> {
+    return this.http.post<Usuario>(`${this.baseUrl}/${empleadoId}`, usuario).pipe(
       catchError((error) => {
         if (error.status === 409) {
           return throwError(() => new Error('Este correo electrónico ya está registrado.'));
@@ -34,12 +34,12 @@ export class UsuarioService {
     );
   }
 
-  actualizarUsuario(id: number, usuario: Usuario): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, usuario);
+  actualizarUsuario(id: number, empleadoId: number, usuario: Usuario): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}/${empleadoId}`, usuario);
   }
 
-  eliminarUsuario(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+  eliminarUsuario(id: number, empleadoId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}/${empleadoId}`);
   }
 
   nuevoUsuario() {

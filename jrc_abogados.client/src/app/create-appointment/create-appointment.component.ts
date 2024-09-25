@@ -8,12 +8,14 @@ import { Cliente } from '../Models/Cliente';
 import { ClienteService } from '../services/cliente-service';
 import { CityStateService } from '../services/city-state.service';
 import { AlertService } from '../services/AlertService';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-create-appointment',
   templateUrl: './create-appointment.component.html'
 })
 export class CreateAppointmentComponent implements OnInit {
+  user: any;
   cita: Cita = new Cita;
   citaId = 0;
   estados: Estado[] = [];
@@ -23,6 +25,7 @@ export class CreateAppointmentComponent implements OnInit {
   formValidado = false;
 
   estadosUbi: string[] = [];
+  estadoActual: string = "";
   ciudades: string[] = [];
 
   constructor(
@@ -31,10 +34,15 @@ export class CreateAppointmentComponent implements OnInit {
     private ubicacionService: UbicacionService,
     private estadoService: EstadoService,
     private cityStateService: CityStateService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.estadoService.getEstados().subscribe(data => this.estados = data);
     this.clienteService.getClientes().subscribe(data => this.clientes = data);
 
@@ -43,7 +51,7 @@ export class CreateAppointmentComponent implements OnInit {
       if (id != 0) {
         this.citaService.getCita(id).subscribe(data => {
           this.cita = data;
-
+          this.estadoActual = data.ubicacion.estado;
           this.onStateChange(this.cita.ubicacion.estado);
         })
         this.tituloForm = "Actualizar datos de la Cita"
@@ -59,6 +67,10 @@ export class CreateAppointmentComponent implements OnInit {
   }
 
   onStateChange(state: string): void {
+    if (state !== this.estadoActual) {
+      this.cita.ubicacion.ciudad = "";
+    }
+
     this.cityStateService.getCitiesByState(state).subscribe(ciudades => {
       this.ciudades = ciudades;
 
@@ -183,6 +195,7 @@ export class CreateAppointmentComponent implements OnInit {
     this.creandoCita = true;
     this.ubicacionService.crearUbicacion(this.cita.ubicacion).subscribe(ubicacion => {
       this.cita.ubicacionId = ubicacion.id;
+      this.cita.empleadoId = this.user.id;
 
       this.citaService.crearCita(this.cita).subscribe(() => {
         this.citaService.nuevaCita();
@@ -203,18 +216,40 @@ export class CreateAppointmentComponent implements OnInit {
     }
 
     this.creandoCita = true;
-    this.ubicacionService.actualizarUbicacion(this.cita.ubicacionId, this.cita.ubicacion).subscribe(() => {
-      this.citaService.actualizarCita(this.citaId, this.cita).subscribe(() => {
-        this.citaService.nuevaCita();
 
-        this.cerrarForm();
-        this.creandoCita = false;
-        this.alertService.showMessage('Cita actualizada con exito.');
-      }, () => {
-        this.creandoCita = false;
-        this.formValidado = false;
-      })
-    })
+    this.ubicacionService.getUbicacion(this.cita.ubicacionId).subscribe(ubicacionOriginal => {
+      if (ubicacionOriginal.direccion !== this.cita.ubicacion.direccion ||
+        ubicacionOriginal.ciudad !== this.cita.ubicacion.ciudad ||
+        ubicacionOriginal.estado !== this.cita.ubicacion.estado ||
+        ubicacionOriginal.codigoPostal !== this.cita.ubicacion.codigoPostal) {
+          this.ubicacionService.crearUbicacion(this.cita.ubicacion).subscribe(ubicacion => {
+            this.cita.ubicacionId = ubicacion.id;
+
+            this.actualizarDatosCita();
+          }, () => {
+            this.creandoCita = false;
+            this.formValidado = false;
+          });
+      } else {
+        this.actualizarDatosCita();
+      }
+    }, () => {
+      this.creandoCita = false;
+      this.formValidado = false;
+    });
+  }
+
+  private actualizarDatosCita() {
+    this.citaService.actualizarCita(this.citaId, this.user.id, this.cita).subscribe(() => {
+      this.citaService.nuevaCita();
+
+      this.cerrarForm();
+      this.creandoCita = false;
+      this.alertService.showMessage('Cita actualizada con éxito.');
+    }, () => {
+      this.creandoCita = false;
+      this.formValidado = false;
+    });
   }
 
   cerrarForm() {

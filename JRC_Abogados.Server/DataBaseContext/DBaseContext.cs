@@ -1,4 +1,5 @@
 ﻿using JRC_Abogados.Server.Models;
+using JRC_Abogados.Server.Models.audits;
 using Microsoft.EntityFrameworkCore;
 
 namespace JRC_Abogados.Server.DataBaseContext
@@ -19,6 +20,14 @@ namespace JRC_Abogados.Server.DataBaseContext
         public DbSet<TipoDocumento> TipoDocumento { get; set; }
         public DbSet<Juzgado> Juzgado { get; set; }
         public DbSet<Estado> Estado { get; set; }
+        public DbSet<ClienteAudit> ClienteAudit { get; set; }
+        public DbSet<CasoAudit> CasoAudit { get; set; }
+        public DbSet<CitaAudit> CitaAudit { get; set; }
+        public DbSet<DocumentoAudit> DocumentoAudit { get; set; }
+        public DbSet<ExpedienteAudit> ExpedienteAudit { get; set; }
+        public DbSet<RecordatorioAudit> RecordatorioAudit { get; set; }
+        public DbSet<EmpleadoAudit> EmpleadoAudit { get; set; }
+        public DbSet<Reporte> Reporte { get; set; }
 
         public DBaseContext(DbContextOptions<DBaseContext> options)
         : base(options)

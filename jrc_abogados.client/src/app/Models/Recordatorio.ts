@@ -9,4 +9,6 @@ export class Recordatorio {
   clienteId: any = "";
   cliente: Cliente = new Cliente;
   [key: string]: any;
+  empleadoId: number = 0;
+  empleado: any;
 }

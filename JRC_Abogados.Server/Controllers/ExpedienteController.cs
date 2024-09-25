@@ -1,9 +1,11 @@
 ﻿using JRC_Abogados.Server.DataBaseContext;
 using JRC_Abogados.Server.Models;
+using JRC_Abogados.Server.Models.audits;
 using JRC_Abogados.Server.ModelsDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace JRC_Abogados.Server.Controllers
 {
@@ -81,16 +83,35 @@ namespace JRC_Abogados.Server.Controllers
             expediente.ClienteId = expedienteDTO.ClienteId;
             expediente.CasoId = expedienteDTO.CasoId;
             expediente.FechaInicio = DateTime.Now;
+            expediente.EmpleadoId = expedienteDTO.EmpleadoId;
 
             _context.Expediente.Add(expediente);
+            await _context.SaveChangesAsync();
+
+            var auditoria = new ExpedienteAudit
+            {
+                ExpedienteId = expediente.Id,
+                Nombre = expediente.Nombre,
+                TipoExpedienteId = expediente.TipoExpedienteId,
+                FechaInicio = expediente.FechaInicio,
+                ClienteId = expediente.ClienteId,
+                CasoId = expediente.CasoId,
+                EmpleadoId = expediente.EmpleadoId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "CREAR",
+                EmpleadoAccionId = expediente.EmpleadoId,
+                DetallesAccion = "Expediente creado"
+            };
+
+            _context.ExpedienteAudit.Add(auditoria);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetExpediente", new { id = expediente.Id }, expediente);
         }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutExpediente(int id, ExpedienteDTO expedienteDTO)
+        [HttpPut("{id}/{empleadoId}")]
+        public async Task<IActionResult> PutExpediente(int id, int empleadoId, ExpedienteDTO expedienteDTO)
         {
             if (id != expedienteDTO.Id)
             {
@@ -98,16 +119,55 @@ namespace JRC_Abogados.Server.Controllers
             }
 
             var expediente = await _context.Expediente.FindAsync(id);
+
+            var detallesAccion = new StringBuilder();
+
+            if (expediente.Nombre != expedienteDTO.Nombre)
+            {
+                detallesAccion.AppendLine($"Nombre cambiado de '{expediente.Nombre}' a '{expedienteDTO.Nombre}'");
+            }
+            if (expediente.TipoExpedienteId != expedienteDTO.TipoExpedienteId)
+            {
+                expediente.TipoExpediente = await _context.TipoExpediente.FindAsync(expediente.TipoExpedienteId);
+                var tipoExpediente = await _context.TipoExpediente.FindAsync(expedienteDTO.TipoExpedienteId);
+                detallesAccion.AppendLine($"Tipo de expediente cambiado de '{expediente.TipoExpedienteId}' a '{tipoExpediente}'");
+            }
+            if (expediente.TipoExpedienteId == 1 && expediente.CasoId != expedienteDTO.CasoId)
+            {
+                var casoActual = await _context.Caso.FindAsync(expediente.CasoId);
+                var caso = await _context.Caso.FindAsync(expedienteDTO.CasoId);
+                casoActual.Juzgado = await _context.Juzgado.FindAsync(casoActual.JuzgadoId);
+                caso.Juzgado = await _context.Juzgado.FindAsync(caso.JuzgadoId);
+                detallesAccion.AppendLine($"Caso cambiado del numero de expediente '{casoActual.Juzgado.NumeroExpediente}' a '{caso.Juzgado.NumeroExpediente}'");
+            }
+
             expediente.Nombre = expedienteDTO.Nombre;
             expediente.TipoExpedienteId = expedienteDTO.TipoExpedienteId;
             expediente.ClienteId = expedienteDTO.ClienteId;
             expediente.CasoId = expedienteDTO.CasoId;
 
-
             _context.Entry(expediente).State = EntityState.Modified;
 
             try
             {
+                await _context.SaveChangesAsync();
+
+                var auditoria = new ExpedienteAudit
+                {
+                    ExpedienteId = expediente.Id,
+                    Nombre = expediente.Nombre,
+                    TipoExpedienteId = expediente.TipoExpedienteId,
+                    FechaInicio = expediente.FechaInicio,
+                    ClienteId = expediente.ClienteId,
+                    CasoId = expediente.CasoId,
+                    EmpleadoId = expediente.EmpleadoId,
+                    FechaAccion = DateTime.Now,
+                    TipoAccion = "ACTUALIZAR",
+                    EmpleadoAccionId = empleadoId,
+                    DetallesAccion = detallesAccion.ToString()
+                };
+
+                _context.ExpedienteAudit.Add(auditoria);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -125,8 +185,8 @@ namespace JRC_Abogados.Server.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteExpediente(int id)
+        [HttpDelete("{id}/{empleadoId}")]
+        public async Task<IActionResult> DeleteExpediente(int id, int empleadoId)
         {
             var expediente = await _context.Expediente.FindAsync(id);
             if (expediente == null)
@@ -134,7 +194,32 @@ namespace JRC_Abogados.Server.Controllers
                 return NotFound();
             }
 
+            var documentos = await _context.Documento.Where(c => c.ExpedienteId == id).ToListAsync();
+            var documentoController = new DocumentoController(_context);
+
+            foreach (var documento in documentos)
+            {
+                await documentoController.DeleteDocumento(documento.Id, empleadoId);
+            }
+
+            var auditoria = new ExpedienteAudit
+            {
+                ExpedienteId = expediente.Id,
+                Nombre = expediente.Nombre,
+                TipoExpedienteId = expediente.TipoExpedienteId,
+                FechaInicio = expediente.FechaInicio,
+                ClienteId = expediente.ClienteId,
+                CasoId = expediente.CasoId,
+                EmpleadoId = expediente.EmpleadoId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "ELIMINAR",
+                EmpleadoAccionId = empleadoId,
+                DetallesAccion = "Expediente eliminado"
+            };
+
             _context.Expediente.Remove(expediente);
+            _context.ExpedienteAudit.Add(auditoria);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

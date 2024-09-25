@@ -23,7 +23,7 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>Mas</th>
+        <th>Más</th>
         <th>Juzgado</th>
         <th>Expediente</th>
         <th>Nombre</th>
@@ -78,18 +78,18 @@
       </div>
       <div class="modal-body">
         <p><strong>Tipo de Caso:</strong> {{ casoSeleccionado?.tipoCaso?.nombre }}</p>
-        <p><strong>Descripcion:</strong> {{ casoSeleccionado?.descripcion }}</p>
+        <p><strong>Descripción:</strong> {{ casoSeleccionado?.descripcion }}</p>
         <p><strong>Fecha de Inicio:</strong> {{ casoSeleccionado?.fechaInicio }}</p>
         <p *ngIf="casoSeleccionado?.estadoId == '3'"><strong>Fecha de Fin:</strong> {{ casoSeleccionado?.fechaTermino }}</p>
         <p><strong>Estado del caso:</strong> {{ casoSeleccionado?.estado?.nombre }}</p>
         <p><strong>Datos del Juzgado</strong></p>
         <p><strong>Nombre de Juzgado:</strong> {{ casoSeleccionado?.juzgado?.nombre }}</p>
-        <p><strong>Numero de Expediente:</strong> {{ casoSeleccionado?.juzgado?.numeroExpediente }}</p>
-        <p><strong>Ubicacion del Caso</strong></p>
-        <p><strong>Direccion del Caso:</strong> {{ casoSeleccionado?.ubicacion?.direccion }}</p>
+        <p><strong>Número de Expediente:</strong> {{ casoSeleccionado?.juzgado?.numeroExpediente }}</p>
+        <p><strong>Ubicación del Caso</strong></p>
+        <p><strong>Dirección del Caso:</strong> {{ casoSeleccionado?.ubicacion?.direccion }}</p>
         <p><strong>Estado:</strong> {{ casoSeleccionado?.ubicacion?.estado }}</p>
         <p><strong>Ciudad:</strong> {{ casoSeleccionado?.ubicacion?.ciudad }}</p>
-        <p><strong>Codigo Postal:</strong> {{ casoSeleccionado?.ubicacion?.codigoPostal }}</p>
+        <p><strong>Código Postal:</strong> {{ casoSeleccionado?.ubicacion?.codigoPostal }}</p>
         <p><strong>Datos del Cliente</strong></p>
         <p><strong>Nombre Cliente:</strong> {{ casoSeleccionado?.cliente.nombre }}</p>
         <p><strong>Apellido Cliente:</strong> {{ casoSeleccionado?.cliente.apellido }}</p>

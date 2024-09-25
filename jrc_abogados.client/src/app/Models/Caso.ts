@@ -16,6 +16,8 @@ export class Caso {
   fechaTermino = "";
   estadoId = "";
   estado: Estado = new Estado;
+  empleadoId: number = 0;
+  empleado: any;
   clienteId = "";
   cliente: any;
   [key: string]: any;

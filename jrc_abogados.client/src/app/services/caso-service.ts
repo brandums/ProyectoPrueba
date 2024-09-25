@@ -66,12 +66,12 @@ export class CasoService {
     );
   }
 
-  actualizarCaso(id: number, caso: Caso): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, caso);
+  actualizarCaso(id: number, empleadoId: number, caso: Caso): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}/${empleadoId}`, caso);
   }
 
-  eliminarCaso(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+  eliminarCaso(id: number, empleadoId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}/${empleadoId}`);
   }
 
   nuevoCaso() {

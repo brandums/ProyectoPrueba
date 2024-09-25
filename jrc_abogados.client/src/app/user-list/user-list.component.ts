@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../services/usuario-service';
 import { Usuario } from '../Models/Usuario';
 import { AlertService } from '../services/AlertService';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-user-list',
   templateUrl: './user-list.component.html'
 })
 export class UserListComponent implements OnInit {
+  user: any;
   usuarios: Usuario[] = [];
   buscarPalabra: string = '';
   usuarioSeleccionado: Usuario | null = null;
@@ -19,10 +21,15 @@ export class UserListComponent implements OnInit {
 
   constructor(
     private usuarioService: UsuarioService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.getUsuarios();
 
     this.usuarioService.$listaUsuarios.subscribe(data => {
@@ -59,7 +66,7 @@ export class UserListComponent implements OnInit {
   }
 
   eliminarUsuario(id: number): void {
-    this.usuarioService.eliminarUsuario(id)
+    this.usuarioService.eliminarUsuario(id, this.user.id)
       .subscribe(() => {
         this.usuarios = this.usuarios.filter(usuario => usuario.id !== id);
         this.alertService.showMessage('Empleado eliminado con exito.');

@@ -15,7 +15,6 @@ namespace JRC_Abogados.Server.Models.EmailHelper
 
         public async Task<bool> SendEmailAsync(string email, string subject, string message)
         {
-#pragma warning disable CS0168 // La variable está declarada pero nunca se usa
             try
             {
                 using (MailMessage mail = new MailMessage())
@@ -40,7 +39,6 @@ namespace JRC_Abogados.Server.Models.EmailHelper
             {
                 return false;
             }
-#pragma warning restore CS0168 // La variable está declarada pero nunca se usa
         }
     }
 }

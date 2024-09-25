@@ -4,6 +4,7 @@ import { UsuarioService } from '../services/usuario-service';
 import { RolService } from '../services/rol-service';
 import { Rol } from '../Models/Rol';
 import { AlertService } from '../services/AlertService';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-create-user',
@@ -11,6 +12,7 @@ import { AlertService } from '../services/AlertService';
   styleUrls: ['./create-user.component.css']
 })
 export class CreateUserComponent implements OnInit {
+  user: any;
   usuario: Usuario = new Usuario;
   usuarioId: number = 0;
   roles: Rol[] = [];
@@ -29,10 +31,15 @@ export class CreateUserComponent implements OnInit {
   constructor(
     private usuarioService: UsuarioService,
     private rolService: RolService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.rolService.getRoles().subscribe(data => {
       this.roles = data
     })
@@ -139,7 +146,7 @@ export class CreateUserComponent implements OnInit {
     this.errorMensaje = null;
     this.unirEmail()
     this.usuario.contraseña = this.contrasenia;
-    this.usuarioService.crearUsuario(this.usuario).subscribe(() => {
+    this.usuarioService.crearUsuario(this.user.id, this.usuario).subscribe(() => {
       this.usuarioService.nuevoUsuario();
 
       this.cerrarForm();
@@ -154,7 +161,7 @@ export class CreateUserComponent implements OnInit {
 
   actualizarUsuario() {
     this.unirEmail();
-    this.usuarioService.actualizarUsuario(this.usuarioId, this.usuario).subscribe(() => {
+    this.usuarioService.actualizarUsuario(this.usuarioId, this.user.id, this.usuario).subscribe(() => {
       this.usuarioService.nuevoUsuario();
 
       this.cerrarForm();

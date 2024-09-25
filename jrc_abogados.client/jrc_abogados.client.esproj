@@ -13,5 +13,6 @@
     <Folder Include="src\app\expedient-list\" />
     <Folder Include="src\app\create-document\" />
     <Folder Include="src\app\document-list\" />
+    <Folder Include="src\app\create-report\" />
   </ItemGroup>
 </Project>

@@ -1,10 +1,12 @@
 ﻿using JRC_Abogados.Server.DataBaseContext;
 using JRC_Abogados.Server.Models;
+using JRC_Abogados.Server.Models.audits;
 using JRC_Abogados.Server.Models.EmailHelper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using System.Text;
 
 namespace JRC_Abogados.Server.Controllers
 {
@@ -59,17 +61,49 @@ namespace JRC_Abogados.Server.Controllers
                 return Conflict(new { message = "El cliente ya está registrado con este correo electrónico." });
             }
 
-            SendEmail(cliente);
+            try
+            {
+                SendEmail(cliente);
 
-            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-            cliente.Nombre = textInfo.ToTitleCase(cliente.Nombre.ToLower());
-            cliente.Apellido = textInfo.ToTitleCase(cliente.Apellido.ToLower());
-            cliente.Ubicacion = null;
-            _context.Cliente.Add(cliente);
-            await _context.SaveChangesAsync();
+                TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+                cliente.Nombre = textInfo.ToTitleCase(cliente.Nombre.ToLower());
+                cliente.Apellido = textInfo.ToTitleCase(cliente.Apellido.ToLower());
+                cliente.Ubicacion = null;
+                _context.Cliente.Add(cliente);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCliente", new { id = cliente.Id }, cliente);
+                var auditoria = new ClienteAudit
+                {
+                    Id = 0,
+                    ClienteId = cliente.Id,
+                    Nombre = cliente.Nombre,
+                    Apellido = cliente.Apellido,
+                    FechaNacimiento = cliente.FechaNacimiento,
+                    Telefono = cliente.Telefono,
+                    CorreoElectronico = cliente.CorreoElectronico,
+                    UbicacionId = cliente.UbicacionId,
+                    FechaAccion = DateTime.Now,
+                    TipoAccion = "CREAR",
+                    EmpleadoId = cliente.EmpleadoId,
+                    EmpleadoAccionId = cliente.EmpleadoId,
+                    DetallesAccion = "Cliente creado"
+                };
+
+                _context.ClienteAudit.Add(auditoria);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetCliente", new { id = cliente.Id }, cliente);
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, new { message = ex.Message, innerException = ex.InnerException?.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
+
 
         [HttpGet("sendCreationEmail")]
         public async void SendEmail(Cliente cliente)
@@ -88,18 +122,70 @@ namespace JRC_Abogados.Server.Controllers
         }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCliente(int id, Cliente cliente)
+        [HttpPut("{id}/{empleadoId}")]
+        public async Task<IActionResult> PutCliente(int id, int empleadoId, Cliente cliente)
         {
             if (id != cliente.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(cliente).State = EntityState.Modified;
+            var clienteActual = await _context.Cliente.FindAsync(id);
+            if (clienteActual == null)
+            {
+                return NotFound();
+            }
+
+            var detallesAccion = new StringBuilder();
+
+            if (clienteActual.Nombre != cliente.Nombre)
+            {
+                detallesAccion.AppendLine($"Nombre cambiado de '{clienteActual.Nombre}' a '{cliente.Nombre}'");
+            }
+            if (clienteActual.Apellido != cliente.Apellido)
+            {
+                detallesAccion.AppendLine($"Apellido cambiado de '{clienteActual.Apellido}' a '{cliente.Apellido}'");
+            }
+            if (clienteActual.FechaNacimiento != cliente.FechaNacimiento)
+            {
+                detallesAccion.AppendLine($"Fecha de nacimiento cambiada de '{clienteActual.FechaNacimiento}' a '{cliente.FechaNacimiento}'");
+            }
+            if (clienteActual.Telefono != cliente.Telefono)
+            {
+                detallesAccion.AppendLine($"Teléfono cambiado de '{clienteActual.Telefono}' a '{cliente.Telefono}'");
+            }
+            if (clienteActual.CorreoElectronico != cliente.CorreoElectronico)
+            {
+                detallesAccion.AppendLine($"Correo electrónico cambiado de '{clienteActual.CorreoElectronico}' a '{cliente.CorreoElectronico}'");
+            }
+            if (clienteActual.UbicacionId != cliente.UbicacionId)
+            {
+                detallesAccion.AppendLine($"Ubicación cambiada de '{clienteActual.UbicacionId}' a '{cliente.UbicacionId}'");
+            }
+
+            _context.Entry(clienteActual).CurrentValues.SetValues(cliente);
 
             try
             {
+                await _context.SaveChangesAsync();
+
+                var auditoria = new ClienteAudit
+                {
+                    ClienteId = clienteActual.Id,
+                    Nombre = cliente.Nombre,
+                    Apellido = cliente.Apellido,
+                    FechaNacimiento = cliente.FechaNacimiento,
+                    Telefono = cliente.Telefono,
+                    CorreoElectronico = cliente.CorreoElectronico,
+                    UbicacionId = cliente.UbicacionId,
+                    FechaAccion = DateTime.Now,
+                    TipoAccion = "ACTUALIZAR",
+                    EmpleadoId = cliente.EmpleadoId,
+                    EmpleadoAccionId = empleadoId,
+                    DetallesAccion = detallesAccion.ToString()
+                };
+
+                _context.ClienteAudit.Add(auditoria);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -117,8 +203,8 @@ namespace JRC_Abogados.Server.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCliente(int id)
+        [HttpDelete("{id}/{empleadoId}")]
+        public async Task<IActionResult> DeleteCliente(int id, int empleadoId)
         {
             var cliente = await _context.Cliente.FindAsync(id);
             if (cliente == null)
@@ -126,7 +212,50 @@ namespace JRC_Abogados.Server.Controllers
                 return NotFound();
             }
 
+            var casoController = new CasoController(_context, _emailSender);
+            var citaController = new CitaController(_context, _emailSender);
+            var expedienteController = new ExpedienteController(_context);
+            var citas = await _context.Cita.Where(c => c.ClienteId == id).ToListAsync();
+
+            foreach (var cita in citas)
+            {
+                await citaController.DeleteCita(cita.Id, empleadoId);
+            }
+            var casos = await _context.Caso.Where(c => c.ClienteId == id).ToListAsync();
+            foreach (var caso in casos)
+            {
+                await casoController.DeleteCaso(caso.Id, empleadoId);
+            }
+            var expedientes = await _context.Expediente.Where(c => c.ClienteId == id).ToListAsync();
+            foreach (var expediente in expedientes)
+            {
+                await expedienteController.DeleteExpediente(expediente.Id, empleadoId);
+            }
+            var recordatorios = await _context.Recordatorio.Where(c => c.ClienteId == id).ToListAsync();
+            foreach (var recordatorio in recordatorios)
+            {
+                await expedienteController.DeleteExpediente(recordatorio.Id, empleadoId);
+            }
+
+            var auditoria = new ClienteAudit
+            {
+                ClienteId = cliente.Id,
+                Nombre = cliente.Nombre,
+                Apellido = cliente.Apellido,
+                FechaNacimiento = cliente.FechaNacimiento,
+                Telefono = cliente.Telefono,
+                CorreoElectronico = cliente.CorreoElectronico,
+                UbicacionId = cliente.UbicacionId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "ELIMINAR",
+                EmpleadoId = cliente.EmpleadoId,
+                EmpleadoAccionId = empleadoId,
+                DetallesAccion = "Cliente eliminado"
+            };
+
             _context.Cliente.Remove(cliente);
+            _context.ClienteAudit.Add(auditoria);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

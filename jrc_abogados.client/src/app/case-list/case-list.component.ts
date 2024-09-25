@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Caso } from '../Models/Caso';
 import { CasoService } from '../services/caso-service';
 import { AlertService } from '../services/AlertService';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-case-list',
   templateUrl: './case-list.component.html'
 })
 export class CaseListComponent implements OnInit {
+  user: any;
   casos: Caso[] = [];
   buscarPalabra: string = '';
   casoSeleccionado: Caso | null = null;
@@ -19,10 +21,15 @@ export class CaseListComponent implements OnInit {
 
   constructor(
     private casoService: CasoService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.getCasos();
 
     this.casoService.$listaCasos.subscribe(data => this.casos = data);
@@ -57,7 +64,7 @@ export class CaseListComponent implements OnInit {
   }
 
   eliminarCaso(id: number): void {
-    this.casoService.eliminarCaso(id)
+    this.casoService.eliminarCaso(id, this.user.id)
       .subscribe(() => {
         this.casos = this.casos.filter(caso => caso.id !== id);
         this.alertService.showMessage('Caso eliminado con exito.');

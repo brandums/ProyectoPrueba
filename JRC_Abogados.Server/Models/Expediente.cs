@@ -18,5 +18,8 @@ namespace JRC_Abogados.Server.Models
         public virtual Caso Caso { get; set; }
         [ForeignKey("ClienteId")]
         public virtual Cliente Cliente { get; set; }
+        public int EmpleadoId { get; set; }
+        [ForeignKey("EmpleadoId")]
+        public virtual Empleado? Empleado { get; set; }
     }
 }

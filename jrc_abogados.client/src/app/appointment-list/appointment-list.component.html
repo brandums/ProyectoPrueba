@@ -22,7 +22,7 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>Mas</th>
+        <th>Más</th>
         <th>Nombre</th>
         <th>Apellido</th>
         <th>Tipo</th>
@@ -75,14 +75,14 @@
       <div class="modal-body">
         <p><strong>Tipo de Cita:</strong> {{ citaSeleccionada?.tipoCita }}</p>
         <p><strong>Estado de la Cita:</strong> {{ citaSeleccionada?.estado?.nombre }}</p>
-        <p><strong>Description:</strong> {{ citaSeleccionada?.notas }}</p>
+        <p><strong>Descripción:</strong> {{ citaSeleccionada?.notas }}</p>
         <p><strong>Fecha de Inicio:</strong> {{ citaSeleccionada?.fechaInicio }}</p>
         <p><strong>Hora:</strong> {{ citaSeleccionada?.hora }}</p>
-        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Ubicacion de la Cita.</strong></p>
-        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Direccion del Caso:</strong> {{ citaSeleccionada?.ubicacion?.direccion }}</p>
+        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Ubicación de la Cita.</strong></p>
+        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Dirección del Caso:</strong> {{ citaSeleccionada?.ubicacion?.direccion }}</p>
         <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Estado:</strong> {{ citaSeleccionada?.ubicacion?.estado }}</p>
         <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Ciudad:</strong> {{ citaSeleccionada?.ubicacion?.ciudad }}</p>
-        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Codigo Postal:</strong> {{ citaSeleccionada?.ubicacion?.codigoPostal }}</p>
+        <p *ngIf="citaSeleccionada?.tipoCita == 'Presencial'"><strong>Código Postal:</strong> {{ citaSeleccionada?.ubicacion?.codigoPostal }}</p>
         <p><strong>Datos del Cliente.</strong></p>
         <p><strong>Nombre Cliente:</strong> {{ citaSeleccionada?.cliente.nombre }}</p>
         <p><strong>Apellido Cliente:</strong> {{ citaSeleccionada?.cliente.apellido }}</p>

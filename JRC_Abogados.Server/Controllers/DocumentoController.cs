@@ -1,9 +1,11 @@
 ﻿using JRC_Abogados.Server.DataBaseContext;
 using JRC_Abogados.Server.Models;
+using JRC_Abogados.Server.Models.audits;
 using JRC_Abogados.Server.ModelsDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace JRC_Abogados.Server.Controllers
 {
@@ -49,49 +51,6 @@ namespace JRC_Abogados.Server.Controllers
             return documento;
         }
 
-        //[HttpPost, DisableRequestSizeLimit]
-        //public async Task<ActionResult<Expediente>> PostDocumento([FromForm] DocumentoDTO documentoDTO, IFormFile file)
-        //{
-        //    if (file == null || file.Length == 0)
-        //    {
-        //        return BadRequest("El archivo es requerido.");
-        //    }
-
-        //    var documento = new Documento
-        //    {
-        //        Nombre = documentoDTO.Nombre,
-        //        TipoDocumentoId = documentoDTO.TipoDocumentoId,
-        //        ExpedienteId = documentoDTO.ExpedienteId,
-        //        FechaInicio = DateTime.Now,
-        //    };
-
-        //    var expediente = await _context.Expediente.FindAsync(documentoDTO.ExpedienteId);
-        //    documento.ClienteId = expediente.ClienteId;
-
-        //    var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "uploads");
-        //    if (!Directory.Exists(uploadsPath))
-        //    {
-        //        Directory.CreateDirectory(uploadsPath);
-        //    }
-
-        //    var fileName = Path.GetFileNameWithoutExtension(file.FileName);
-        //    var extension = Path.GetExtension(file.FileName);
-        //    var uniqueFileName = $"{fileName}_{Guid.NewGuid()}{extension}";
-        //    var filePath = Path.Combine(uploadsPath, uniqueFileName);
-
-        //    using (var stream = new FileStream(filePath, FileMode.Create))
-        //    {
-        //        await file.CopyToAsync(stream);
-        //    }
-
-        //    documento.Path = filePath;
-
-        //    _context.Documento.Add(documento);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction("GetDocumento", new { id = documento.Id }, documento);
-        //}
-
         [HttpPost, DisableRequestSizeLimit]
         public async Task<ActionResult<Documento>> PostDocumento([FromForm] DocumentoDTO documentoDTO, IFormFile file)
         {
@@ -104,37 +63,53 @@ namespace JRC_Abogados.Server.Controllers
             {
                 Nombre = documentoDTO.Nombre,
                 ExpedienteId = documentoDTO.ExpedienteId,
+                Descripcion = documentoDTO.Descripcion,
                 FechaInicio = DateTime.Now,
+                EmpleadoId = documentoDTO.EmpleadoId,
             };
 
             var expediente = await _context.Expediente.FindAsync(documentoDTO.ExpedienteId);
             documento.ClienteId = expediente.ClienteId;
 
-            // Obtener la ruta a la carpeta 'wwwroot/uploads' del servidor
             var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
 
-            // Verificar si la carpeta existe, si no, crearla
             if (!Directory.Exists(uploadsPath))
             {
                 Directory.CreateDirectory(uploadsPath);
             }
 
-            // Generar un nombre de archivo único
             var fileName = Path.GetFileNameWithoutExtension(file.FileName);
             var extension = Path.GetExtension(file.FileName);
             var uniqueFileName = $"{fileName}_{Guid.NewGuid()}{extension}";
             var filePath = Path.Combine(uploadsPath, uniqueFileName);
 
-            // Guardar el archivo en el servidor
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
             }
 
-            // Guardar la ruta del archivo en la base de datos
-            documento.Path = $"/uploads/{uniqueFileName}"; // Utilizar una ruta relativa
+            documento.Path = $"/uploads/{uniqueFileName}";
 
             _context.Documento.Add(documento);
+            await _context.SaveChangesAsync();
+
+            var auditoria = new DocumentoAudit
+            {
+                DocumentoId = documento.Id,
+                Nombre = documento.Nombre,
+                Descripcion = documento.Descripcion,
+                Path = documento.Path,
+                FechaInicio = documento.FechaInicio,
+                ExpedienteId = documento.ExpedienteId,
+                ClienteId = documento.ClienteId,
+                EmpleadoId = documento.EmpleadoId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "CREAR",
+                EmpleadoAccionId = documento.EmpleadoId,
+                DetallesAccion = "Documento creado"
+            };
+
+            _context.DocumentoAudit.Add(auditoria);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetDocumento", new { id = documento.Id }, documento);
@@ -143,8 +118,8 @@ namespace JRC_Abogados.Server.Controllers
 
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDocumento(int id, DocumentoDTO documentoDTO)
+        [HttpPut("{id}/{empleadoId}")]
+        public async Task<IActionResult> PutDocumento(int id, int empleadoId, DocumentoDTO documentoDTO)
         {
             if (id != documentoDTO.Id)
             {
@@ -152,12 +127,42 @@ namespace JRC_Abogados.Server.Controllers
             }
 
             var documento = await _context.Documento.FindAsync(id);
-            documento.Nombre = documentoDTO.Nombre;
 
+            var detallesAccion = new StringBuilder();
+            if (documento.Nombre != documentoDTO.Nombre)
+            {
+                detallesAccion.AppendLine($"Nombre cambiado de '{documento.Descripcion}' a '{documentoDTO.Descripcion}'");
+            }
+            if (documento.Descripcion != documentoDTO.Descripcion)
+            {
+                detallesAccion.AppendLine($"Descripción cambiado de '{documento.Descripcion}' a '{documentoDTO.Descripcion}'");
+            }
+
+            documento.Nombre = documentoDTO.Nombre;
+            documento.Descripcion = documentoDTO.Descripcion;
             _context.Entry(documento).State = EntityState.Modified;
 
             try
             {
+                await _context.SaveChangesAsync();
+
+                var auditoria = new DocumentoAudit
+                {
+                    DocumentoId = documento.Id,
+                    Nombre = documentoDTO.Nombre,
+                    Descripcion = documentoDTO.Descripcion,
+                    Path = documento.Path,
+                    FechaInicio = documento.FechaInicio,
+                    ExpedienteId = documento.ExpedienteId,
+                    ClienteId = documento.ClienteId,
+                    EmpleadoId = documento.EmpleadoId,
+                    FechaAccion = DateTime.Now,
+                    TipoAccion = "ACTUALIZAR",
+                    EmpleadoAccionId = empleadoId,
+                    DetallesAccion = detallesAccion.ToString()
+                };
+
+                _context.DocumentoAudit.Add(auditoria);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -175,8 +180,8 @@ namespace JRC_Abogados.Server.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDocumento(int id)
+        [HttpDelete("{id}/{empleadoId}")]
+        public async Task<IActionResult> DeleteDocumento(int id, int empleadoId)
         {
             var documento = await _context.Documento.FindAsync(id);
             if (documento == null)
@@ -184,7 +189,25 @@ namespace JRC_Abogados.Server.Controllers
                 return NotFound();
             }
 
+            var auditoria = new DocumentoAudit
+            {
+                DocumentoId = documento.Id,
+                Nombre = documento.Nombre,
+                Descripcion = documento.Descripcion,
+                Path = documento.Path,
+                FechaInicio = documento.FechaInicio,
+                ExpedienteId = documento.ExpedienteId,
+                ClienteId = documento.ClienteId,
+                EmpleadoId = documento.EmpleadoId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "ACTUALIZAR",
+                EmpleadoAccionId = empleadoId,
+                DetallesAccion = "Documento eliminado"
+            };
+
             _context.Documento.Remove(documento);
+            _context.DocumentoAudit.Add(auditoria);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

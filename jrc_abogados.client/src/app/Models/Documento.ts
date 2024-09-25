@@ -1,6 +1,5 @@
 import { Cliente } from "./Cliente";
 import { Expediente } from "./Expediente";
-import { TipoDocumento } from "./TipoDocumento";
 
 export class Documento {
   id: number = 0;
@@ -12,4 +11,6 @@ export class Documento {
   cliente: Cliente = new Cliente;
   expedienteId = 0;
   expediente: Expediente = new Expediente;
+  empleadoId: number = 0;
+  empleado: any;
 }

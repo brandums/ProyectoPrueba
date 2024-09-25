@@ -1,10 +1,12 @@
 ﻿using JRC_Abogados.Server.DataBaseContext;
 using JRC_Abogados.Server.Models;
+using JRC_Abogados.Server.Models.audits;
 using JRC_Abogados.Server.Models.EmailHelper;
 using JRC_Abogados.Server.ModelsDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace JRC_Abogados.Server.Controllers
 {
@@ -105,15 +107,34 @@ namespace JRC_Abogados.Server.Controllers
             recordatorio.Fecha = recordatorioDTO.Fecha;
             recordatorio.Hora = recordatorioDTO.Hora;
             recordatorio.ClienteId = recordatorioDTO.ClienteId;
+            recordatorio.EmpleadoId = recordatorioDTO.EmpleadoId;
 
             _context.Recordatorio.Add(recordatorio);
+            await _context.SaveChangesAsync();
+
+            var auditoria = new RecordatorioAudit
+            {
+                RecordatorioId = recordatorio.Id,
+                Titulo = recordatorio.Titulo,
+                Descripcion = recordatorio.Descripcion,
+                Fecha = recordatorio.Fecha,
+                Hora = recordatorio.Hora,
+                ClienteId = recordatorio.ClienteId,
+                EmpleadoId = recordatorio.EmpleadoId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "CREAR",
+                EmpleadoAccionId = recordatorio.EmpleadoId,
+                DetallesAccion = "Recordatorio creado"
+            };
+
+            _context.RecordatorioAudit.Add(auditoria);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRecordatorio", new { id = recordatorio.Id }, recordatorio);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRecordatorio(int id, Recordatorio recordatorio)
+        [HttpPut("{id}/{empleadoId}")]
+        public async Task<IActionResult> PutRecordatorio(int id, int empleadoId, Recordatorio recordatorio)
         {
             if (id != recordatorio.Id)
             {
@@ -122,10 +143,53 @@ namespace JRC_Abogados.Server.Controllers
 
             var recordatorioExisting = await _context.Recordatorio.FindAsync(id);
 
+            var detallesAccion = new StringBuilder();
+
+            if (recordatorioExisting.Titulo != recordatorio.Titulo)
+            {
+                detallesAccion.AppendLine($"Titulo cambiado de '{recordatorioExisting.Titulo}' a '{recordatorio.Titulo}'");
+            }
+            if (recordatorioExisting.Descripcion != recordatorio.Descripcion)
+            {
+                detallesAccion.AppendLine($"Descripción cambiada de '{recordatorioExisting.Descripcion}' a '{recordatorio.Descripcion}'");
+            }
+            if (recordatorioExisting.Fecha != recordatorio.Fecha)
+            {
+                detallesAccion.AppendLine($"Fecha cambiada de '{recordatorioExisting.Fecha}' a '{recordatorio.Fecha}'");
+            }
+            if (recordatorioExisting.Hora != recordatorio.Hora)
+            {
+                detallesAccion.AppendLine($"Hora cambiado de '{recordatorioExisting.Hora}' a '{recordatorio.Hora}'");
+            }
+            if (recordatorioExisting.ClienteId != recordatorio.ClienteId)
+            {
+                var clienteActual = await _context.Cliente.FindAsync(recordatorioExisting.ClienteId);
+                var cliente = await _context.Estado.FindAsync(recordatorio.ClienteId);
+                detallesAccion.AppendLine($"Cliente cambiado de '{clienteActual.Nombre}' a '{cliente.Nombre}'");
+            }
+
             _context.Entry(recordatorioExisting).CurrentValues.SetValues(recordatorio);
 
             try
             {
+                await _context.SaveChangesAsync();
+
+                var auditoria = new RecordatorioAudit
+                {
+                    RecordatorioId = recordatorio.Id,
+                    Titulo = recordatorio.Titulo,
+                    Descripcion = recordatorio.Descripcion,
+                    Fecha = recordatorio.Fecha,
+                    Hora = recordatorio.Hora,
+                    ClienteId = recordatorio.ClienteId,
+                    EmpleadoId = recordatorio.EmpleadoId,
+                    FechaAccion = DateTime.Now,
+                    TipoAccion = "ACTUALIZAR",
+                    EmpleadoAccionId = empleadoId,
+                    DetallesAccion = detallesAccion.ToString()
+                };
+
+                _context.RecordatorioAudit.Add(auditoria);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -143,8 +207,8 @@ namespace JRC_Abogados.Server.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRecordatorio(int id)
+        [HttpDelete("{id}/{empleadoId}")]
+        public async Task<IActionResult> DeleteRecordatorio(int id, int empleadoId)
         {
             var recordatorio = await _context.Recordatorio.FindAsync(id);
             if (recordatorio == null)
@@ -152,7 +216,24 @@ namespace JRC_Abogados.Server.Controllers
                 return NotFound();
             }
 
+            var auditoria = new RecordatorioAudit
+            {
+                RecordatorioId = recordatorio.Id,
+                Titulo = recordatorio.Titulo,
+                Descripcion = recordatorio.Descripcion,
+                Fecha = recordatorio.Fecha,
+                Hora = recordatorio.Hora,
+                ClienteId = recordatorio.ClienteId,
+                EmpleadoId = recordatorio.EmpleadoId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "ELIMINAR",
+                EmpleadoAccionId = empleadoId,
+                DetallesAccion = "Recordatorio eliminado"
+            };
+
             _context.Recordatorio.Remove(recordatorio);
+            _context.RecordatorioAudit.Add(auditoria);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

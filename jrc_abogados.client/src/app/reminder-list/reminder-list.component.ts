@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { RecordatorioService } from '../services/recordatorio-service';
 import { Recordatorio } from '../Models/Recordatorio';
 import { AlertService } from '../services/AlertService';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-reminder-list',
   templateUrl: './reminder-list.component.html'
 })
 export class ReminderListComponent implements OnInit {
+  user: any;
   recordatorios: Recordatorio[] = [];
   buscarPalabra: string = '';
   recordatorioSeleccionado: Recordatorio | null = null;
@@ -19,10 +21,15 @@ export class ReminderListComponent implements OnInit {
 
   constructor(
     private recordatorioService: RecordatorioService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.getRecordatorios();
 
     this.recordatorioService.$listaRecordatorios.subscribe(data => {
@@ -58,7 +65,7 @@ export class ReminderListComponent implements OnInit {
   }
 
   eliminarRecordatorio(id: number): void {
-    this.recordatorioService.eliminarRecordatorio(id).subscribe(() => {
+    this.recordatorioService.eliminarRecordatorio(id, this.user.id).subscribe(() => {
       this.recordatorios = this.recordatorios.filter(recordatorio => recordatorio.id !== id);
       this.alertService.showMessage('Recordatorio eliminado con exito.');
       });

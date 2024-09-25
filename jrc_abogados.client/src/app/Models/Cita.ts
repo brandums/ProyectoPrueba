@@ -11,6 +11,8 @@ export class Cita {
   estadoId: any = "";
   estado: Estado = new Estado;
   notas: string = "";
+  empleadoId: number = 0;
+  empleado: any;
   clienteId = "";
   cliente: any;
   [key: string]: any;

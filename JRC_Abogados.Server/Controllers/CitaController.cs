@@ -1,9 +1,11 @@
 ﻿using JRC_Abogados.Server.DataBaseContext;
 using JRC_Abogados.Server.Models;
+using JRC_Abogados.Server.Models.audits;
 using JRC_Abogados.Server.Models.EmailHelper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace JRC_Abogados.Server.Controllers
 {
@@ -84,6 +86,25 @@ namespace JRC_Abogados.Server.Controllers
                 <p>Equipo JRC Abogados.</p>
             ";
 
+            var auditoria = new CitaAudit
+            {
+                CitaId = cita.Id,
+                TipoCita = cita.TipoCita,
+                FechaInicio = cita.FechaInicio,
+                Hora = cita.Hora,
+                UbicacionId = cita.UbicacionId,
+                EstadoId = cita.EstadoId,
+                Notas = cita.Notas,
+                ClienteId = cita.ClienteId,
+                EmpleadoId = cita.EmpleadoId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "CREAR",
+                EmpleadoAccionId = cita.EmpleadoId,
+                DetallesAccion = "Cita creada"
+            };
+
+            _context.CitaAudit.Add(auditoria);
+            await _context.SaveChangesAsync();
 
             bool resultado = await _emailSender.SendEmailAsync(cita.Cliente.CorreoElectronico, emailSubject, emailBody);
 
@@ -138,31 +159,102 @@ namespace JRC_Abogados.Server.Controllers
         }
 
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCita(int id, Cita cita)
+        [HttpPut("{id}/{empleadoId}")]
+        public async Task<IActionResult> PutCita(int id, int empleadoId, Cita cita)
         {
             if (id != cita.Id)
             {
                 return BadRequest();
             }
 
-            var citaExisting = await _context.Cita.FindAsync(id);
-            if (citaExisting.EstadoId != cita.EstadoId)
+            var citaActual = await _context.Cita.FindAsync(id);
+            if (citaActual == null)
             {
+                return NotFound();
+            }
+
+            var detallesAccion = new StringBuilder();
+
+            if (citaActual.TipoCita != cita.TipoCita)
+            {
+                detallesAccion.AppendLine($"Tipo de cita cambiado de '{citaActual.TipoCita}' a '{cita.TipoCita}'");
+            }
+            if (citaActual.FechaInicio != cita.FechaInicio)
+            {
+                detallesAccion.AppendLine($"Fecha de inicio cambiado de '{citaActual.FechaInicio}' a '{cita.FechaInicio}'");
+            }
+            if (citaActual.Hora != cita.Hora)
+            {
+                detallesAccion.AppendLine($"Hora cambiada de '{citaActual.Hora}' a '{cita.Hora}'");
+            }
+            if (citaActual.UbicacionId != cita.UbicacionId)
+            {
+                citaActual.Ubicacion = await _context.Ubicacion.FindAsync(citaActual.UbicacionId);
+                cita.Ubicacion = await _context.Ubicacion.FindAsync(cita.UbicacionId);
+                if (citaActual.Ubicacion.Direccion != cita.Ubicacion.Direccion)
+                {
+                    detallesAccion.AppendLine($"Direccion cambiada de '{citaActual.Ubicacion.Direccion}' a '{cita.Ubicacion.Direccion}'");
+                }
+                if (citaActual.Ubicacion.Estado != cita.Ubicacion.Estado)
+                {
+                    detallesAccion.AppendLine($"Estado cambiada de '{citaActual.Ubicacion.Estado}' a '{cita.Ubicacion.Estado}'");
+                }
+                if (citaActual.Ubicacion.Ciudad != cita.Ubicacion.Ciudad)
+                {
+                    detallesAccion.AppendLine($"Ciudad cambiada de '{citaActual.Ubicacion.Ciudad}' a '{cita.Ubicacion.Ciudad}'");
+                }
+                if (citaActual.Ubicacion.CodigoPostal != cita.Ubicacion.CodigoPostal)
+                {
+                    detallesAccion.AppendLine($"Codigo Postal cambiada de '{citaActual.Ubicacion.CodigoPostal}' a '{cita.Ubicacion.CodigoPostal}'");
+                }
+            }
+            if (citaActual.EstadoId != cita.EstadoId)
+            {
+                var estadoActual = await _context.Estado.FindAsync(citaActual.EstadoId);
                 var estado = await _context.Estado.FindAsync(cita.EstadoId);
-                string emailSubject = "Actualizacion de la Cita!";
-                string emailBody = $"El estado de la caso es {estado.Nombre}.!";
+                string emailSubject = "Actualización de la Cita!";
+                string emailBody = $"El estado del caso es {estado.Nombre}.!";
                 await _emailSender.SendEmailAsync(cita.Cliente.CorreoElectronico, emailSubject, emailBody);
+                detallesAccion.AppendLine($"Estado cambiado de '{estadoActual.Nombre}' a '{estado.Nombre}'");
+            }
+            if (citaActual.Notas != cita.Notas)
+            {
+                detallesAccion.AppendLine($"Descripción cambiado de '{citaActual.Notas}' a '{cita.Notas}'");
+            }
+            if (citaActual.ClienteId != cita.ClienteId)
+            {
+                var clienteActual = await _context.Cliente.FindAsync(citaActual.ClienteId);
+                var cliente = await _context.Estado.FindAsync(cita.ClienteId);
+                detallesAccion.AppendLine($"Cliente cambiado de '{clienteActual.Nombre}' a '{cliente.Nombre}'");
             }
 
             cita.Cliente = null;
             cita.Estado = null;
             cita.Ubicacion = null;
-
-            _context.Entry(citaExisting).CurrentValues.SetValues(cita);
+            _context.Entry(citaActual).CurrentValues.SetValues(cita);
 
             try
             {
+                await _context.SaveChangesAsync();
+
+                var auditoria = new CitaAudit
+                {
+                    CitaId = citaActual.Id,
+                    TipoCita = cita.TipoCita,
+                    FechaInicio = cita.FechaInicio,
+                    Hora = cita.Hora,
+                    UbicacionId = cita.UbicacionId,
+                    EstadoId = cita.EstadoId,
+                    Notas = cita.Notas,
+                    ClienteId = cita.ClienteId,
+                    EmpleadoId = cita.EmpleadoId,
+                    FechaAccion = DateTime.Now,
+                    TipoAccion = "ACTUALIZAR",
+                    EmpleadoAccionId = empleadoId,
+                    DetallesAccion = detallesAccion.ToString()
+                };
+
+                _context.CitaAudit.Add(auditoria);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -180,8 +272,8 @@ namespace JRC_Abogados.Server.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCita(int id)
+        [HttpDelete("{id}/{empleadoId}")]
+        public async Task<IActionResult> DeleteCita(int id, int empleadoId)
         {
             var cita = await _context.Cita.FindAsync(id);
             if (cita == null)
@@ -189,7 +281,26 @@ namespace JRC_Abogados.Server.Controllers
                 return NotFound();
             }
 
+            var auditoria = new CitaAudit
+            {
+                CitaId = cita.Id,
+                TipoCita = cita.TipoCita,
+                FechaInicio = cita.FechaInicio,
+                Hora = cita.Hora,
+                UbicacionId = cita.UbicacionId,
+                EstadoId = cita.EstadoId,
+                Notas = cita.Notas,
+                ClienteId = cita.ClienteId,
+                EmpleadoId = cita.EmpleadoId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "ELIMINAR",
+                EmpleadoAccionId = empleadoId,
+                DetallesAccion = "Cita eliminada"
+            };
+
             _context.Cita.Remove(cita);
+            _context.CitaAudit.Add(auditoria);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

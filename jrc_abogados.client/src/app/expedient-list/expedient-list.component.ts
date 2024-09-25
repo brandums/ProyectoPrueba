@@ -3,12 +3,14 @@ import { AlertService } from '../services/AlertService';
 import { Expediente } from '../Models/Expediente';
 import { ExpedienteService } from '../services/expediente-service';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-expedient-list',
   templateUrl: './expedient-list.component.html'
 })
 export class ExpedientListComponent implements OnInit {
+  user: any;
   expedientes: Expediente[] = [];
   buscarPalabra: string = '';
   expedienteSeleccionado: Expediente | null = null;
@@ -21,10 +23,15 @@ export class ExpedientListComponent implements OnInit {
   constructor(
     private expedienteService: ExpedienteService,
     private alertService: AlertService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.getExpedientes();
 
     this.expedienteService.$listaExpedientes.subscribe(data => this.expedientes = data);
@@ -63,8 +70,7 @@ export class ExpedientListComponent implements OnInit {
   }
 
   eliminarExpediente(id: number): void {
-    this.expedienteService.eliminarExpediente(id)
-      .subscribe(() => {
+    this.expedienteService.eliminarExpediente(id, this.user.id).subscribe(() => {
         this.expedientes = this.expedientes.filter(caso => caso.id !== id);
         this.alertService.showMessage('Expediente eliminado con exito.');
       });

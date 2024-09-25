@@ -5,12 +5,14 @@ import { Documento } from '../Models/Documento';
 import { TipoDocumento } from '../Models/TipoDocumento';
 import { TipoDocumentoService } from '../services/tipoDocumento-service';
 import { DocumentoService } from '../services/document-service';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-create-document',
   templateUrl: './create-document.component.html'
 })
 export class CreateDocumentComponent implements OnInit {
+  user: any;
   documento: Documento = new Documento;
   documentoId = 0;
   clientes: Cliente[] = [];
@@ -24,10 +26,15 @@ export class CreateDocumentComponent implements OnInit {
 
   constructor(
     private documentoService: DocumentoService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.documentoService.$documentoId.subscribe(id => {
       this.documentoId = id;
       if (id != 0) {
@@ -105,6 +112,7 @@ export class CreateDocumentComponent implements OnInit {
     this.errorMensaje = null;
 
     this.documento.expedienteId = this.expedienteId;
+    this.documento.empleadoId = this.user.id;
 
     const formData = new FormData();
     formData.append('file', this.archivoSeleccionado as Blob);
@@ -128,7 +136,7 @@ export class CreateDocumentComponent implements OnInit {
   actualizarDocumento() {
     this.creandoDocumento = true;
 
-    this.documentoService.actualizarDocumento(this.documentoId, this.documento).subscribe(() => {
+    this.documentoService.actualizarDocumento(this.documentoId, this.user.id, this.documento).subscribe(() => {
       this.documentoService.nuevoDocumento();
 
       this.cerrarForm();

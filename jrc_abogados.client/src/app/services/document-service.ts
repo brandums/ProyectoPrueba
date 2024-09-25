@@ -46,12 +46,12 @@ export class DocumentoService {
     );
   }
 
-  actualizarDocumento(id: number, documento: Documento): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, documento);
+  actualizarDocumento(id: number, empleadoId: number, documento: Documento): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}/${empleadoId}`, documento);
   }
 
-  eliminarDocumento(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+  eliminarDocumento(id: number, empleadoId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}/${empleadoId}`);
   }
 
   nuevoDocumento() {

@@ -39,12 +39,12 @@ export class RecordatorioService {
     return this.http.post<Recordatorio>(`${this.baseUrl}`, recordatorio);
   }
 
-  actualizarRecordatorio(id: number, recordatorio: Recordatorio): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, recordatorio);
+  actualizarRecordatorio(id: number, empleadoId: number, recordatorio: Recordatorio): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}/${empleadoId}`, recordatorio);
   }
 
-  eliminarRecordatorio(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+  eliminarRecordatorio(id: number, empleadoId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}/${empleadoId}`);
   }
 
   nuevoRecordatorio() {

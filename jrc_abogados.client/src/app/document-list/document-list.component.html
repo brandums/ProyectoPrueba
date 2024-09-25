@@ -9,16 +9,16 @@
     <div class="input-group">
       <span class="input-group-text" id="inputGroupPrepend"><i class="fas fa-filter"></i></span>
       <select class="form-select" [(ngModel)]="campoFiltro">
-        <option value="nombre">Nombre de documento</option>
+        <option value="nombre">Nombre del documento</option>
       </select>
-      <input type="text" class="form-control" id="searchInput" [(ngModel)]="buscarPalabra" placeholder="Buscar Documento">
+      <input type="text" class="form-control" id="searchInput" [(ngModel)]="buscarPalabra" placeholder="Buscar documento">
     </div>
   </div>
 
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>Mas</th>
+        <th>Más</th>
         <th>Nombre del Documento</th>
         <th>Descripción</th>
       </tr>
@@ -55,7 +55,6 @@
   <app-create-document [expedienteId]="expedienteId"></app-create-document>
 </div>
 
-
 <div id="document-detail-modal" class="modal fade custom-backdrop">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -68,12 +67,12 @@
         <p><strong>Descripción:</strong> {{ documentoSeleccionado?.descripcion }}</p>
         <p><strong>Fecha de Subida:</strong> {{ documentoSeleccionado?.fechaInicio }}</p>
         <p><strong>Datos del Cliente</strong></p>
-        <p><strong>Nombre Cliente:</strong> {{ documentoSeleccionado?.cliente?.nombre }}</p>
-        <p><strong>Apellido Cliente:</strong> {{ documentoSeleccionado?.cliente?.apellido }}</p>
-        <p><strong>Email:</strong> {{ documentoSeleccionado?.cliente?.correoElectronico }}</p>
+        <p><strong>Nombre del Cliente:</strong> {{ documentoSeleccionado?.cliente?.nombre }}</p>
+        <p><strong>Apellido del Cliente:</strong> {{ documentoSeleccionado?.cliente?.apellido }}</p>
+        <p><strong>Correo electrónico:</strong> {{ documentoSeleccionado?.cliente?.correoElectronico }}</p>
       </div>
       <div class="modal-footer">
-        <button (click)="openModal()" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="document-view-modal">Vista documento</button>
+        <button (click)="openModal()" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="document-view-modal">Ver documento</button>
         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirm-delete-modal">Eliminar</button>
         <button (click)="editarDocumento(documentoSeleccionado?.id ?? 0)" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#document-form">Editar</button>
       </div>
@@ -85,7 +84,7 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Confirmar Eliminación</h5>
+        <h5 class="modal-title">Confirmar eliminación</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -98,7 +97,6 @@
     </div>
   </div>
 </div>
-
 
 <div class="modal modal-dialog-centered modal-dialog-scrollable pdf-modal" tabindex="-1"
      role="dialog"

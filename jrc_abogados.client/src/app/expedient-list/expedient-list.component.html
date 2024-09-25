@@ -78,9 +78,9 @@
         <p><strong>Tipo de Expediente:</strong> {{ expedienteSeleccionado?.tipoExpediente?.nombre }}</p>
         <p *ngIf="expedienteSeleccionado?.caso"><strong>Datos del Caso</strong></p>
         <p *ngIf="expedienteSeleccionado?.caso"><strong>Tipo de Caso:</strong> {{ expedienteSeleccionado?.caso?.tipoCaso?.nombre }}</p>
-        <p *ngIf="expedienteSeleccionado?.caso"><strong>Descripcion:</strong> {{ expedienteSeleccionado?.caso?.descripcion }}</p>
+        <p *ngIf="expedienteSeleccionado?.caso"><strong>Descripción:</strong> {{ expedienteSeleccionado?.caso?.descripcion }}</p>
         <p *ngIf="expedienteSeleccionado?.caso"><strong>Ciudad:</strong> {{ expedienteSeleccionado?.caso?.ubicacion?.ciudad }}</p>
-        <p *ngIf="expedienteSeleccionado?.caso"><strong>Numero de Expediente:</strong> {{ expedienteSeleccionado?.caso?.juzgado?.numeroExpediente }}</p>
+        <p *ngIf="expedienteSeleccionado?.caso"><strong>Número de Expediente:</strong> {{ expedienteSeleccionado?.caso?.juzgado?.numeroExpediente }}</p>
         <p><strong>Datos del Cliente</strong></p>
         <p><strong>Nombre Cliente:</strong> {{ expedienteSeleccionado?.cliente?.nombre }}</p>
         <p><strong>Apellido Cliente:</strong> {{ expedienteSeleccionado?.cliente?.apellido }}</p>

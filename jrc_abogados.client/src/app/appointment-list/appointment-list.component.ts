@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Cita } from '../Models/Cita';
 import { CitaService } from '../services/cita-service';
 import { AlertService } from '../services/AlertService';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-appointment-list',
   templateUrl: './appointment-list.component.html'
 })
 export class AppointmentListComponent implements OnInit {
+  user: any;
   citas: Cita[] = [];
   buscarPalabra: string = '';
   citaSeleccionada: Cita | null = null;
@@ -19,10 +21,15 @@ export class AppointmentListComponent implements OnInit {
 
   constructor(
     private citaService: CitaService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.getCitas();
 
     this.citaService.$listaCitas.subscribe(data => this.citas = data);
@@ -57,7 +64,7 @@ export class AppointmentListComponent implements OnInit {
 
 
   eliminarCita(id: number): void {
-    this.citaService.eliminarCita(id).subscribe(() => {
+    this.citaService.eliminarCita(id, this.user.id).subscribe(() => {
       this.citas = this.citas.filter(cita => cita.id !== id);
       this.alertService.showMessage('Cita eliminada con exito.');
     });

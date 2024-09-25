@@ -3,6 +3,7 @@ C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\ne
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\testhost.exe
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\appsettings.json
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\JRC_Abogados.Server.staticwebassets.runtime.json
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\xunit.runner.visualstudio.dotnetcore.testadapter.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\xunit.runner.reporters.netcoreapp10.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\xunit.runner.utility.netcoreapp10.dll
@@ -13,7 +14,21 @@ C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\ne
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\JRC_Abogados.Server.pdb
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Azure.Core.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Azure.Identity.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Humanizer.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.barcodes.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.bouncy-castle-connector.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.forms.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.io.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.kernel.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.layout.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.pdfa.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.pdfua.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.sign.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.styledxmlparser.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.svg.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.bouncy-castle-adapter.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\itext.commons.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Microsoft.AspNetCore.SpaProxy.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Microsoft.Bcl.AsyncInterfaces.dll
@@ -23,6 +38,7 @@ C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\ne
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Microsoft.CodeAnalysis.Workspaces.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
+C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Microsoft.DotNet.PlatformAbstractions.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Abstractions.dll
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.Design.dll
@@ -224,4 +240,3 @@ C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\obj\Debug\ne
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\obj\Debug\net8.0\JRC_Abogados.Server.pdb
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\obj\Debug\net8.0\JRC_Abogados.Server.genruntimeconfig.cache
 C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\obj\Debug\net8.0\ref\JRC_Abogados.Server.dll
-C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\bin\Debug\net8.0\JRC_Abogados.Server.staticwebassets.runtime.json

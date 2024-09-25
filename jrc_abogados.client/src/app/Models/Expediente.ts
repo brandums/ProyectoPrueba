@@ -12,4 +12,6 @@ export class Expediente {
   casoId: any = '';
   caso: Caso = new Caso;
   cliente: Cliente = new Cliente;
+  empleadoId: number = 0;
+  empleado: any;
 }

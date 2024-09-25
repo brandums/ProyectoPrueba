@@ -73,7 +73,9 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-html, body { height: 100%; }
+html, body {
+  height: 100%;
+}
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 
@@ -81,3 +83,16 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   height: 800px;
   width: 1000px;
 }
+
+
+
+
+
+.cdk-overlay-container {
+  z-index: 1200 !important; /* Asegúrate de que este valor sea mayor que el del modal */
+}
+
+.mat-select-panel {
+  z-index: 1201 !important; /* Debe estar por encima del modal */
+}
+

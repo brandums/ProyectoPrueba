@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JRC_Abogados.Server.Models
 {
@@ -6,14 +7,21 @@ namespace JRC_Abogados.Server.Models
     {
         [Key]
         public int Id { get; set; }
-#pragma warning disable CS8618 // Un campo que no acepta valores NULL debe contener un valor distinto de NULL al salir del constructor. Considere la posibilidad de declararlo como que admite un valor NULL.
         public string Nombre { get; set; }
-#pragma warning restore CS8618 // Un campo que no acepta valores NULL debe contener un valor distinto de NULL al salir del constructor. Considere la posibilidad de declararlo como que admite un valor NULL.
-#pragma warning disable CS8618 // Un campo que no acepta valores NULL debe contener un valor distinto de NULL al salir del constructor. Considere la posibilidad de declararlo como que admite un valor NULL.
         public string Descripcion { get; set; }
-#pragma warning restore CS8618 // Un campo que no acepta valores NULL debe contener un valor distinto de NULL al salir del constructor. Considere la posibilidad de declararlo como que admite un valor NULL.
-#pragma warning disable CS8618 // Un campo que no acepta valores NULL debe contener un valor distinto de NULL al salir del constructor. Considere la posibilidad de declararlo como que admite un valor NULL.
-        public string Path { get; set; }
-#pragma warning restore CS8618 // Un campo que no acepta valores NULL debe contener un valor distinto de NULL al salir del constructor. Considere la posibilidad de declararlo como que admite un valor NULL.
+        public string? Path { get; set; }
+        public string TablasSeleccionadas { get; set; }
+        public DateTime? FechaInicio { get; set; }
+        public DateTime? FechaFin { get; set; }
+        public DateTime? FechaGeneracion { get; set; }
+        public int? ClienteId { get; set; }
+        [ForeignKey("ClienteId")]
+        public virtual Cliente? Cliente { get; set; }
+        public int? EmpleadoId { get; set; }
+        [ForeignKey("EmpleadoId")]
+        public virtual Empleado? Empleado { get; set; }
+        public int EmpleadoAccionId { get; set; }
+        [ForeignKey("EmpleadoAccionId")]
+        public virtual Empleado? EmpleadoAccion { get; set; }
     }
 }

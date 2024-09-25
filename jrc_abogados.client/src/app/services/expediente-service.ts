@@ -46,12 +46,12 @@ export class ExpedienteService {
     );
   }
 
-  actualizarExpediente(id: number, expediente: Expediente): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, expediente);
+  actualizarExpediente(id: number, empleadoId: number, expediente: Expediente): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}/${empleadoId}`, expediente);
   }
 
-  eliminarExpediente(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+  eliminarExpediente(id: number, empleadoId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}/${empleadoId}`);
   }
 
   nuevoExpediente() {

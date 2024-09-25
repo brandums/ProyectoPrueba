@@ -40,6 +40,7 @@ namespace JRC_Abogados.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Ubicacion>> PostUbicacion(Ubicacion ubicacion)
         {
+            ubicacion.Id = 0;
             _context.Ubicacion.Add(ubicacion);
             await _context.SaveChangesAsync();
 

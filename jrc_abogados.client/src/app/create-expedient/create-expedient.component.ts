@@ -7,12 +7,14 @@ import { TipoExpediente } from '../Models/TipoExpediente';
 import { TipoExpedienteService } from '../services/tipoExpediente-service';
 import { ExpedienteService } from '../services/expediente-service';
 import { CasoService } from '../services/caso-service';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-create-expedient',
   templateUrl: './create-expedient.component.html'
 })
 export class CreateExpedientComponent implements OnInit {
+  user: any;
   expediente: Expediente = new Expediente;
   expedienteId = 0;
   tiposExpediente: TipoExpediente[] = [];
@@ -28,10 +30,15 @@ export class CreateExpedientComponent implements OnInit {
     private expedienteService: ExpedienteService,
     private tipoExpedienteService: TipoExpedienteService,
     private casoService: CasoService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.tipoExpedienteService.getTipoDeExpediente().subscribe(data => this.tiposExpediente = data);
     this.clienteService.getClientes().subscribe(data => this.clientes = data);
 
@@ -60,7 +67,6 @@ export class CreateExpedientComponent implements OnInit {
         this.casos = data;
       }, error => {
         this.casos = [];
-        this.errorMensaje = 'Error al cargar los casos.';
       });
     } else {
       this.casos = [];
@@ -171,6 +177,7 @@ export class CreateExpedientComponent implements OnInit {
   crearExpediente() {
     this.creandoExpediente = true;
     this.errorMensaje = null;
+    this.expediente.empleadoId = this.user.id
 
     if (this.expediente.tipoExpedienteId == '1') this.expediente.casoId = null;
 
@@ -192,7 +199,7 @@ export class CreateExpedientComponent implements OnInit {
 
     if (this.expediente.tipoExpedienteId == '1') this.expediente.casoId = null;
 
-    this.expedienteService.actualizarExpediente(this.expedienteId, this.expediente).subscribe(() => {
+    this.expedienteService.actualizarExpediente(this.expedienteId, this.user.id, this.expediente).subscribe(() => {
       this.expedienteService.nuevoExpediente();
 
       this.cerrarForm();

@@ -19,7 +19,9 @@ export class CitaService {
     return this.http.get<Cita[]>(`${this.baseUrl}`).pipe(
       map((citas: Cita[]) => {
         return citas.map(cita => {
-          cita.fechaInicio = new Date(cita.fechaInicio).toISOString().split('T')[0];
+          if (cita.fechaInicio) {
+            cita.fechaInicio = new Date(cita.fechaInicio).toISOString().split('T')[0];
+          }
           return cita;
         });
       })
@@ -29,7 +31,9 @@ export class CitaService {
   getCita(id: number): Observable<Cita> {
     return this.http.get<Cita>(`${this.baseUrl}/${id}`).pipe(
       map(cita => {
-        cita.fechaInicio = new Date(cita.fechaInicio).toISOString().split('T')[0];
+        if (cita.fechaInicio) {
+          cita.fechaInicio = new Date(cita.fechaInicio).toISOString().split('T')[0];
+        }
         return cita;
       })
     );
@@ -40,12 +44,12 @@ export class CitaService {
     return this.http.post<Cita>(`${this.baseUrl}`, cita);
   }
 
-  actualizarCita(id: number, cita: Cita): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${id}`, cita);
+  actualizarCita(id: number, empleadoId: number, cita: Cita): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}/${empleadoId}`, cita);
   }
 
-  eliminarCita(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`);
+  eliminarCita(id: number, empleadoId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/${id}/${empleadoId}`);
   }
 
   nuevaCita() {

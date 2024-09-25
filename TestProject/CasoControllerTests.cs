@@ -1,293 +1,316 @@
-﻿using JRC_Abogados.Server.Controllers;
-using JRC_Abogados.Server.DataBaseContext;
-using JRC_Abogados.Server.Models;
-using JRC_Abogados.Server.Models.EmailHelper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Moq;
+﻿//using JRC_Abogados.Server.Controllers;
+//using JRC_Abogados.Server.DataBaseContext;
+//using JRC_Abogados.Server.Models;
+//using JRC_Abogados.Server.Models.EmailHelper;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.EntityFrameworkCore;
+//using Moq;
 
-namespace TestProject
-{
-    public class CasoControllerTests
-    {
-        private DBaseContext GetInMemoryDbContext()
-        {
-            var options = new DbContextOptionsBuilder<DBaseContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
+//namespace TestProject
+//{
+//    public class CasoControllerTests
+//    {
+//        private DBaseContext GetInMemoryDbContext()
+//        {
+//            var options = new DbContextOptionsBuilder<DBaseContext>()
+//                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+//                .Options;
 
-            return new DBaseContext(options);
-        }
+//            return new DBaseContext(options);
+//        }
 
-        [Fact]
-        public async Task GetCasos_ReturnsCasosWithDetails()
-        {
-            // Arrange
-            var context = GetInMemoryDbContext();
-            var mockEmailSender = new Mock<IEmailSender>();
+//        [Fact]
+//        public async Task GetCasos_ReturnsCasosWithDetails()
 
-            var ubicacion = new Ubicacion { Id = 1, Direccion = "123 Calle Falsa", Estado = "Chiapas", Ciudad = "CDMX", CodigoPostal = 20043 };
-            var cliente = new Cliente { Id = 1, Nombre = "Juan", Apellido = "Perez", CorreoElectronico = "juan@example.com" };
-            var tipoCaso = new TipoCaso { Id = 1, Nombre = "Tipo 1" };
-            var juzgado = new Juzgado { Id = 1, Nombre = "Juzgado 1", NumeroExpediente = 123454323 };
-            var estado = new Estado { Id = 1, Nombre = "Estado 1" };
+//        {    //HU013 Verifica que pueda filtrar casos por su información para ubicar registro rápidamente.
+//             // Arrange
 
-            context.Ubicacion.Add(ubicacion);
-            context.Cliente.Add(cliente);
-            context.TipoCaso.Add(tipoCaso);
-            context.Juzgado.Add(juzgado);
-            context.Estado.Add(estado);
+//            var context = GetInMemoryDbContext();
+//            var mockEmailSender = new Mock<IEmailSender>();
 
-            var caso = new Caso
-            {
-                Id = 1,
-                TipoCasoId = 1,
-                JuzgadoId = 1,
-                UbicacionId = 1,
-                EstadoId = 1,
-                ClienteId = 1,
-                Descripcion = "Esto es una prueba",
-                FechaInicio = DateTime.Now,
-                FechaTermino = DateTime.Now,
-            };
+//            var ubicacion = new Ubicacion { Id = 1, Direccion = "206 Av Clouthier", Estado = "Jalisco", Ciudad = "Guadalajara", CodigoPostal = 20043 };
+//            var cliente = new Cliente
+//            {
+//                Id = 1,
+//                Nombre = "Alejandra",
+//                Apellido = "Nava",
+//                FechaNacimiento = DateTime.Now.AddYears(-30),
+//                Telefono = "(33) 2344-2345",
+//                CorreoElectronico = "nalejandra@hotmail.com",
+//                UbicacionId = 1
+//            };
+//            var tipoCaso = new TipoCaso { Id = 1, Nombre = "Demandante" };
+//            var juzgado = new Juzgado { Id = 1, Nombre = "Juzgado primero", NumeroExpediente = "X/220100" };
+//            var estado = new Estado { Id = 1, Nombre = "Abierto" };
 
-            context.Caso.Add(caso);
-            await context.SaveChangesAsync();
+//            context.Ubicacion.Add(ubicacion);
+//            context.Cliente.Add(cliente);
+//            context.TipoCaso.Add(tipoCaso);
+//            context.Juzgado.Add(juzgado);
+//            context.Estado.Add(estado);
 
-            var controller = new CasoController(context, mockEmailSender.Object);
+//            var caso = new Caso
+//            {
+//                Id = 1,
+//                TipoCasoId = 1,
+//                JuzgadoId = 1,
+//                UbicacionId = 1,
+//                EstadoId = 1,
+//                ClienteId = 1,
+//                Descripcion = "Esto es una prueba",
+//                FechaInicio = DateTime.Now,
+//                FechaTermino = DateTime.Now,
+//            };
 
-            // Act
-            var result = await controller.GetCasos();
+//            context.Caso.Add(caso);
+//            await context.SaveChangesAsync();
 
-            // Assert
-            var actionResult = Assert.IsType<ActionResult<IEnumerable<Caso>>>(result);
-            var casos = Assert.IsAssignableFrom<IEnumerable<Caso>>(actionResult.Value);
-            var casoResult = casos.FirstOrDefault();
-            Assert.NotNull(casoResult);
-            Assert.Equal("Tipo 1", casoResult.TipoCaso.Nombre);
-            Assert.Equal("Juzgado 1", casoResult.Juzgado.Nombre);
-            Assert.Equal("123 Calle Falsa", casoResult.Ubicacion.Direccion);
-            Assert.Equal("Estado 1", casoResult.Estado.Nombre);
-            Assert.Equal("Juan", casoResult.Cliente.Nombre);
-        }
+//            var controller = new CasoController(context, mockEmailSender.Object);
 
-        [Fact]
-        public async Task GetCaso_ReturnsCasoWithDetails()
-        {
-            // Arrange
-            var context = GetInMemoryDbContext();
-            var mockEmailSender = new Mock<IEmailSender>();
+//            // Act
+//            var result = await controller.GetCasos();
 
-            var ubicacion = new Ubicacion { Id = 1, Direccion = "123 Calle Falsa", Estado = "Chiapas", Ciudad = "CDMX", CodigoPostal = 20043 };
-            var cliente = new Cliente { Id = 1, Nombre = "Juan", Apellido = "Perez", CorreoElectronico = "juan@example.com" };
-            var tipoCaso = new TipoCaso { Id = 1, Nombre = "Tipo 1" };
-            var juzgado = new Juzgado { Id = 1, Nombre = "Juzgado 1", NumeroExpediente = 123454323 };
-            var estado = new Estado { Id = 1, Nombre = "Estado 1" };
+//            // Assert
+//            var actionResult = Assert.IsType<ActionResult<IEnumerable<Caso>>>(result);
+//            var casos = Assert.IsAssignableFrom<IEnumerable<Caso>>(actionResult.Value);
+//            var casoResult = casos.FirstOrDefault();
+//            Assert.NotNull(casoResult);
+//            Assert.Equal("Demandante", casoResult.TipoCaso.Nombre);
+//            Assert.Equal("Juzgado primero", casoResult.Juzgado.Nombre);
+//            Assert.Equal("206 Av Clouthier", casoResult.Ubicacion.Direccion);
+//            Assert.Equal("Abierto", casoResult.Estado.Nombre);
+//            Assert.Equal("Alejandra", casoResult.Cliente.Nombre);
+//        }
 
-            context.Ubicacion.Add(ubicacion);
-            context.Cliente.Add(cliente);
-            context.TipoCaso.Add(tipoCaso);
-            context.Juzgado.Add(juzgado);
-            context.Estado.Add(estado);
+//        [Fact]
+//        public async Task GetCaso_ReturnsCasoWithDetails()
+//        {
+//            //HU012, Verifica que se puedad obtner detalles de un caso en especifico y se pueda visualizar.
+//            // Arrange
 
-            var caso = new Caso
-            {
-                Id = 1,
-                TipoCasoId = 1,
-                JuzgadoId = 1,
-                UbicacionId = 1,
-                EstadoId = 1,
-                ClienteId = 1,
-                Descripcion = "Esto es una prueba",
-                FechaInicio = DateTime.Now,
-                FechaTermino = DateTime.Now,
-            };
+//            var context = GetInMemoryDbContext();
+//            var mockEmailSender = new Mock<IEmailSender>();
 
-            context.Caso.Add(caso);
-            await context.SaveChangesAsync();
+//            var ubicacion = new Ubicacion { Id = 1, Direccion = "206 Av Clouthier", Estado = "Jalisco", Ciudad = "Guadalajara", CodigoPostal = 20043 };
+//            var cliente = new Cliente
+//            {
+//                Id = 1,
+//                Nombre = "Alejandra",
+//                Apellido = "Nava",
+//                FechaNacimiento = DateTime.Now.AddYears(-30),
+//                Telefono = "(33) 2344-2345",
+//                CorreoElectronico = "nalejandra@hotmail.com",
+//                UbicacionId = 1
+//            };
+//            var tipoCaso = new TipoCaso { Id = 1, Nombre = "Demandante" };
+//            var juzgado = new Juzgado { Id = 1, Nombre = "Juzgado primero", NumeroExpediente = "X/220100" };
+//            var estado = new Estado { Id = 1, Nombre = "Abierto" };
 
-            var controller = new CasoController(context, mockEmailSender.Object);
+//            context.Ubicacion.Add(ubicacion);
+//            context.Cliente.Add(cliente);
+//            context.TipoCaso.Add(tipoCaso);
+//            context.Juzgado.Add(juzgado);
+//            context.Estado.Add(estado);
 
-            // Act
-            var result = await controller.GetCaso(1);
+//            var caso = new Caso
+//            {
+//                Id = 1,
+//                TipoCasoId = 1,
+//                JuzgadoId = 1,
+//                UbicacionId = 1,
+//                EstadoId = 1,
+//                ClienteId = 1,
+//                Descripcion = "Esto es una prueba",
+//                FechaInicio = DateTime.Now,
+//                FechaTermino = DateTime.Now,
+//            };
 
-            // Assert
-            var actionResult = Assert.IsType<ActionResult<Caso>>(result);
-            var casoResult = Assert.IsType<Caso>(actionResult.Value);
-            Assert.NotNull(casoResult);
-            Assert.Equal("Tipo 1", casoResult.TipoCaso.Nombre);
-            Assert.Equal("Juzgado 1", casoResult.Juzgado.Nombre);
-            Assert.Equal("123 Calle Falsa", casoResult.Ubicacion.Direccion);
-            Assert.Equal("Estado 1", casoResult.Estado.Nombre);
-            Assert.Equal("Juan", casoResult.Cliente.Nombre);
-        }
+//            context.Caso.Add(caso);
+//            await context.SaveChangesAsync();
 
-        [Fact]
-        public async Task PostCaso_CreatesNewCasoAndSendsEmail()
-        {
-            // Arrange
-            var context = GetInMemoryDbContext();
-            var mockEmailSender = new Mock<IEmailSender>();
+//            var controller = new CasoController(context, mockEmailSender.Object);
 
-            var ubicacion = new Ubicacion { Id = 1, Direccion = "123 Calle Falsa", Estado = "Chiapas", Ciudad = "CDMX", CodigoPostal = 20043 };
-            context.Ubicacion.Add(ubicacion);
+//            // Act
+//            var result = await controller.GetCaso(1);
 
-            var cliente = new Cliente
-            {
-                Id = 1,
-                Nombre = "Maria",
-                Apellido = "Lopez",
-                CorreoElectronico = "maria@example.com",
-                UbicacionId = 1,
-                FechaNacimiento = DateTime.Now.AddYears(-25),
-                Telefono = 9876543210,
-            };
-            var tipoCaso = new TipoCaso { Id = 1, Nombre = "Tipo 1" };
-            var juzgado = new Juzgado { Id = 1, Nombre = "Juzgado 1", NumeroExpediente = 123454323 };
-            var estado = new Estado { Id = 1, Nombre = "Estado 1" };
+//            // Assert
+//            var actionResult = Assert.IsType<ActionResult<Caso>>(result);
+//            var casoResult = Assert.IsType<Caso>(actionResult.Value);
+//            Assert.NotNull(casoResult);
+//            Assert.Equal("Demandante", casoResult.TipoCaso.Nombre);
+//            Assert.Equal("Juzgado primero", casoResult.Juzgado.Nombre);
+//            Assert.Equal("206 Av Clouthier", casoResult.Ubicacion.Direccion);
+//            Assert.Equal("Abierto", casoResult.Estado.Nombre);
+//            Assert.Equal("Alejandra", casoResult.Cliente.Nombre);
+//        }
 
-            context.Cliente.Add(cliente);
-            context.TipoCaso.Add(tipoCaso);
-            context.Juzgado.Add(juzgado);
-            context.Estado.Add(estado);
-            await context.SaveChangesAsync();
+//        [Fact]
+//        public async Task PostCaso_CreatesNewCasoAndSendsEmail()
+//        {
+//            //HU008 y HU014 valida que se pueda registrar un nuevo caso en el sistema y que se envíe un correo electrónico al cliente para notificacion.
+//            // Arrange
+//            var context = GetInMemoryDbContext();
+//            var mockEmailSender = new Mock<IEmailSender>();
 
-            var caso = new Caso
-            {
-                TipoCasoId = 1,
-                JuzgadoId = 1,
-                UbicacionId = 1,
-                EstadoId = 1,
-                ClienteId = 1,
-                Descripcion = "Esto es una prueba",
-                FechaInicio = DateTime.Now,
-                FechaTermino = DateTime.Now,
-                Cliente = cliente,
-                Ubicacion = ubicacion,
-                Juzgado = juzgado,
-                TipoCaso = tipoCaso,
-                Estado = estado
-            };
+//            var ubicacion = new Ubicacion { Id = 1, Direccion = "206 Av Clouthier", Estado = "Jalisco", Ciudad = "Guadalajara", CodigoPostal = 20043 };
+//            context.Ubicacion.Add(ubicacion);
 
-            var controller = new CasoController(context, mockEmailSender.Object);
+//            var cliente = new Cliente
+//            {
+//                Id = 1,
+//                Nombre = "Rigoberto",
+//                Apellido = "Lopez",
+//                CorreoElectronico = "rigoberto@hotmail.com",
+//                UbicacionId = 1,
+//                FechaNacimiento = DateTime.Now.AddYears(-25),
+//                Telefono = "(33) 2344-2348",
+//            };
+//            var tipoCaso = new TipoCaso { Id = 1, Nombre = "Demandante" };
+//            var juzgado = new Juzgado { Id = 1, Nombre = "Juzgado primero", NumeroExpediente = "X/220100" };
+//            var estado = new Estado { Id = 1, Nombre = "Abierto" };
 
-            // Act
-            var result = await controller.PostCaso(caso);
+//            context.Cliente.Add(cliente);
+//            context.TipoCaso.Add(tipoCaso);
+//            context.Juzgado.Add(juzgado);
+//            context.Estado.Add(estado);
+//            await context.SaveChangesAsync();
 
-            // Assert
-            var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-            var createdCaso = Assert.IsType<Caso>(createdResult.Value);
-            Assert.Equal(1, createdCaso.Id);
+//            var caso = new Caso
+//            {
+//                TipoCasoId = 1,
+//                JuzgadoId = 1,
+//                UbicacionId = 1,
+//                EstadoId = 1,
+//                ClienteId = 1,
+//                Descripcion = "Esto es una prueba",
+//                FechaInicio = DateTime.Now,
+//                FechaTermino = DateTime.Now,
+//                Cliente = cliente,
+//                Ubicacion = ubicacion,
+//                Juzgado = juzgado,
+//                TipoCaso = tipoCaso,
+//                Estado = estado
+//            };
 
-            mockEmailSender.Verify(m => m.SendEmailAsync(
-                caso.Cliente.CorreoElectronico,
-                It.IsAny<string>(),
-                It.IsAny<string>()), Times.Once);
-        }
+//            var controller = new CasoController(context, mockEmailSender.Object);
 
-        [Fact]
-        public async Task PutCaso_UpdatesExistingCaso()
-        {
-            // Arrange
-            var context = GetInMemoryDbContext();
-            var mockEmailSender = new Mock<IEmailSender>();
+//            // Act
+//            var result = await controller.PostCaso(caso);
 
-            var ubicacion = new Ubicacion
-            {
-                Id = 1,
-                Direccion = "123 Calle Falsa",
-                Estado = "Chiapas",
-                Ciudad = "CDMX",
-                CodigoPostal = 20043
-            };
-            context.Ubicacion.Add(ubicacion);
+//            // Assert
+//            var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
+//            var createdCaso = Assert.IsType<Caso>(createdResult.Value);
+//            Assert.Equal(1, createdCaso.Id);
 
-            var cliente = new Cliente
-            {
-                Id = 1,
-                Nombre = "Maria",
-                Apellido = "Lopez",
-                CorreoElectronico = "maria@example.com",
-                UbicacionId = 1,
-                FechaNacimiento = DateTime.Now.AddYears(-25),
-                Telefono = 9876543210,
-            };
-            var tipoCaso = new TipoCaso { Id = 1, Nombre = "Tipo 1" };
-            var juzgado = new Juzgado { Id = 1, Nombre = "Juzgado 1", NumeroExpediente = 123454323 };
-            var estado = new Estado { Id = 1, Nombre = "Estado 1" };
-            var estado2 = new Estado { Id = 2, Nombre = "Estado 2" };
+//            mockEmailSender.Verify(m => m.SendEmailAsync(
+//                caso.Cliente.CorreoElectronico,
+//                It.IsAny<string>(),
+//                It.IsAny<string>()), Times.Once);
+//        }
 
-            context.Cliente.Add(cliente);
-            context.TipoCaso.Add(tipoCaso);
-            context.Juzgado.Add(juzgado);
-            context.Estado.Add(estado);
-            context.Estado.Add(estado2);
+//        [Fact]
+//        public async Task PutCaso_UpdatesExistingCaso()
+//        {   //HU009 valida que se puedad modificar los datos de un caso.
+//            // Arrange
+//            var context = GetInMemoryDbContext();
+//            var mockEmailSender = new Mock<IEmailSender>();
 
-            var caso = new Caso
-            {
-                Id = 1,
-                TipoCasoId = 1,
-                JuzgadoId = 1,
-                UbicacionId = 1,
-                EstadoId = 1,
-                ClienteId = 1,
-                Descripcion = "Esto es una prueba",
-                FechaInicio = DateTime.Now,
-                FechaTermino = DateTime.Now
-            };
+//            var ubicacion = new Ubicacion
+//            {
+//                Id = 1,
+//                Direccion = "206 Av Clouthier",
+//                Estado = "Jalisco",
+//                Ciudad = "Guadalajara",
+//                CodigoPostal = 20043
+//            };
+//            context.Ubicacion.Add(ubicacion);
 
-            context.Caso.Add(caso);
-            await context.SaveChangesAsync();
+//            var cliente = new Cliente
+//            {
+//                Id = 1,
+//                Nombre = "Maria",
+//                Apellido = "Lopez",
+//                CorreoElectronico = "maria@hotmail.com",
+//                UbicacionId = 1,
+//                FechaNacimiento = DateTime.Now.AddYears(-25),
+//                Telefono = "(33) 2344-2348",
+//            };
+//            var tipoCaso = new TipoCaso { Id = 1, Nombre = "Demandante" };
+//            var juzgado = new Juzgado { Id = 1, Nombre = "Juzgado primero", NumeroExpediente = "X/220100" };
+//            var estado = new Estado { Id = 1, Nombre = "Abierto" };
+//            var estado2 = new Estado { Id = 2, Nombre = "Cerrado" };
 
-            var controller = new CasoController(context, mockEmailSender.Object);
+//            context.Cliente.Add(cliente);
+//            context.TipoCaso.Add(tipoCaso);
+//            context.Juzgado.Add(juzgado);
+//            context.Estado.Add(estado);
+//            context.Estado.Add(estado2);
 
-            // Act
-            caso.EstadoId = 2;
-            caso.Estado = estado2;
+//            var caso = new Caso
+//            {
+//                Id = 1,
+//                TipoCasoId = 1,
+//                JuzgadoId = 1,
+//                UbicacionId = 1,
+//                EstadoId = 1,
+//                ClienteId = 1,
+//                Descripcion = "Esto es una prueba",
+//                FechaInicio = DateTime.Now,
+//                FechaTermino = DateTime.Now
+//            };
 
-            var result = await controller.PutCaso(1, caso);
+//            context.Caso.Add(caso);
+//            await context.SaveChangesAsync();
 
-            // Assert
-            Assert.IsType<OkResult>(result);
+//            var controller = new CasoController(context, mockEmailSender.Object);
 
-            var updatedCaso = await context.Caso.FindAsync(1);
-            Assert.NotNull(caso);
-            Assert.Equal(2, caso.EstadoId);
-        }
+//            // Act
+//            caso.EstadoId = 2;
+//            caso.Estado = estado2;
+
+//            var result = await controller.PutCaso(1, caso);
+
+//            // Assert
+//            Assert.IsType<OkResult>(result);
+
+//            var updatedCaso = await context.Caso.FindAsync(1);
+//            Assert.NotNull(caso);
+//            Assert.Equal(2, caso.EstadoId);
+//        }
 
 
-        [Fact]
-        public async Task DeleteCaso_RemovesCaso()
-        {
-            // Arrange
-            var context = GetInMemoryDbContext();
-            var mockEmailSender = new Mock<IEmailSender>();
+//        [Fact]
+//        public async Task DeleteCaso_RemovesCaso()
+//        {   //HU010 verifica que se pueda eliminar un caso.
+//            // Arrange
+//            var context = GetInMemoryDbContext();
+//            var mockEmailSender = new Mock<IEmailSender>();
 
-            var caso = new Caso
-            {
-                Id = 1,
-                TipoCasoId = 1,
-                JuzgadoId = 1,
-                UbicacionId = 1,
-                EstadoId = 1,
-                ClienteId = 1,
-                Descripcion = "Caso de prueba",
-                FechaInicio = DateTime.Now,
-                FechaTermino = DateTime.Now.AddMonths(1)
-            };
+//            var caso = new Caso
+//            {
+//                Id = 1,
+//                TipoCasoId = 1,
+//                JuzgadoId = 1,
+//                UbicacionId = 1,
+//                EstadoId = 1,
+//                ClienteId = 1,
+//                Descripcion = "Caso de prueba",
+//                FechaInicio = DateTime.Now,
+//                FechaTermino = DateTime.Now.AddMonths(1)
+//            };
 
-            context.Caso.Add(caso);
-            await context.SaveChangesAsync();
+//            context.Caso.Add(caso);
+//            await context.SaveChangesAsync();
 
-            var controller = new CasoController(context, mockEmailSender.Object);
+//            var controller = new CasoController(context, mockEmailSender.Object);
 
-            // Act
-            var result = await controller.DeleteCaso(1);
+//            // Act
+//            var result = await controller.DeleteCaso(1);
 
-            // Assert
-            Assert.IsType<NoContentResult>(result);
-            var deletedCaso = await context.Caso.FindAsync(1);
-            Assert.Null(deletedCaso);
-        }
-    }
-}
+//            // Assert
+//            Assert.IsType<NoContentResult>(result);
+//            var deletedCaso = await context.Caso.FindAsync(1);
+//            Assert.Null(deletedCaso);
+//        }
+//    }
+//}

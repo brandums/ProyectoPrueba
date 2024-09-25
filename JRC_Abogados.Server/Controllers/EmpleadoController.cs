@@ -1,10 +1,12 @@
 ﻿using JRC_Abogados.Server.DataBaseContext;
 using JRC_Abogados.Server.Models;
+using JRC_Abogados.Server.Models.audits;
 using JRC_Abogados.Server.Models.EmailHelper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace JRC_Abogados.Server.Controllers
 {
@@ -51,8 +53,8 @@ namespace JRC_Abogados.Server.Controllers
             return empleado;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Empleado>> PostUsuario(Empleado usuario)
+        [HttpPost("{empleadoId}")]
+        public async Task<ActionResult<Empleado>> PostUsuario(int empleadoId, Empleado usuario)
         {
             var existingEmpleado = await _context.Empleado.FirstOrDefaultAsync(c => c.CorreoElectronico == usuario.CorreoElectronico);
 
@@ -73,31 +75,86 @@ namespace JRC_Abogados.Server.Controllers
                 _context.Empleado.Add(usuario);
                 await _context.SaveChangesAsync();
 
-                usuario.Contraseña = null;
+                var auditoria = new EmpleadoAudit
+                {
+                    Id = 0,
+                    EmpleadoId = usuario.Id,
+                    Nombre = usuario.Nombre,
+                    CorreoElectronico = usuario.CorreoElectronico,
+                    Contraseña = usuario.Contraseña,
+                    RolId = usuario.RolId,
+                    FechaAccion = DateTime.Now,
+                    TipoAccion = "CREAR",
+                    EmpleadoAccionId = empleadoId,
+                    DetallesAccion = "Empleado creado"
+                };
 
+                _context.EmpleadoAudit.Add(auditoria);
+                await _context.SaveChangesAsync();
+
+                usuario.Contraseña = null;
                 return CreatedAtAction("GetUsuario", new { id = usuario.Id }, usuario);
             }
 
             return BadRequest();
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuario(int id, Empleado usuario)
+        [HttpPut("{id}/{empleadoId}")]
+        public async Task<IActionResult> PutUsuario(int id, int empleadoId, Empleado empleado)
         {
-            if (id != usuario.Id)
+            var empleadoActual = await _context.Empleado.FindAsync(id);
+            if (empleadoActual == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            if (!string.IsNullOrEmpty(usuario.Contraseña))
+            if (!string.IsNullOrEmpty(empleado.Contraseña))
             {
-                usuario.Contraseña = _passwordHasher.HashPassword(usuario, usuario.Contraseña);
+                empleado.Contraseña = _passwordHasher.HashPassword(empleado, empleado.Contraseña);
             }
 
-            _context.Entry(usuario).State = EntityState.Modified;
+            var detallesAccion = new StringBuilder();
+
+            if (empleadoActual.Nombre != empleado.Nombre)
+            {
+                detallesAccion.AppendLine($"Nombre cambiado de '{empleadoActual.Nombre}' a '{empleado.Nombre}'");
+            }
+            if (empleadoActual.CorreoElectronico != empleado.CorreoElectronico)
+            {
+                detallesAccion.AppendLine($"Email cambiado de '{empleadoActual.CorreoElectronico}' a '{empleado.CorreoElectronico}'");
+            }
+            if (empleadoActual.RolId != empleado.RolId)
+            {
+                empleadoActual.Rol = await _context.Rol.FindAsync(empleadoActual.RolId);
+                empleado.Rol = await _context.Rol.FindAsync(empleado.RolId);
+
+                detallesAccion.AppendLine($"Rol cambiado de '{empleadoActual.Rol.Nombre}' a '{empleado.Rol.Nombre}'");
+            }
+            if (empleadoActual.Contraseña != empleado.Contraseña)
+            {
+                detallesAccion.AppendLine($"Contraseña cambiada de '{empleadoActual.Contraseña}' a '{empleado.Contraseña}'");
+            }
+
+            _context.Entry(empleadoActual).CurrentValues.SetValues(empleado);
 
             try
             {
+                await _context.SaveChangesAsync();
+
+                var auditoria = new EmpleadoAudit
+                {
+                    EmpleadoId = empleado.Id,
+                    Nombre = empleado.Nombre,
+                    CorreoElectronico = empleado.CorreoElectronico,
+                    Contraseña = empleado.Contraseña,
+                    RolId = empleado.RolId,
+                    FechaAccion = DateTime.Now,
+                    TipoAccion = "ACTUALIZAR",
+                    EmpleadoAccionId = empleadoId,
+                    DetallesAccion = detallesAccion.ToString()
+                };
+
+                _context.EmpleadoAudit.Add(auditoria);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -115,8 +172,8 @@ namespace JRC_Abogados.Server.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuario(int id)
+        [HttpDelete("{id}/{empleadoId}")]
+        public async Task<IActionResult> DeleteUsuario(int id, int empleadoId)
         {
             var empleado = await _context.Empleado.FindAsync(id);
             if (empleado == null)
@@ -124,7 +181,22 @@ namespace JRC_Abogados.Server.Controllers
                 return NotFound();
             }
 
+            var auditoria = new EmpleadoAudit
+            {
+                EmpleadoId = empleado.Id,
+                Nombre = empleado.Nombre,
+                CorreoElectronico = empleado.CorreoElectronico,
+                Contraseña = empleado.Contraseña,
+                RolId = empleado.RolId,
+                FechaAccion = DateTime.Now,
+                TipoAccion = "ACTUALIZAR",
+                EmpleadoAccionId = empleadoId,
+                DetallesAccion = "Empleado Eliminado"
+            };
+
             _context.Empleado.Remove(empleado);
+            _context.EmpleadoAudit.Add(auditoria);
+
             await _context.SaveChangesAsync();
 
             return NoContent();

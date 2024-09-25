@@ -34,7 +34,7 @@
           <span class="input-group-text" id="inputGroupPrepend">Contraseña</span>
           <input [type]="verContrasenia ? 'text' : 'password'" class="form-control" name="Contrasenia" id="validacionContrasenia" placeholder="Contraseña123!" maxlength="15" minlength="8" onpaste="return false;" [(ngModel)]="contrasenia" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,15}$" required>
           <div class="invalid-feedback">
-            {{ !contrasenia ? 'Por favor ingrese una contraseña.' : 'La contraseña debe tener al menos 8 caracteres, una mayúscula, al menos un número y un simbolo especial (!,*,?,#).' }}
+            {{ !contrasenia ? 'Por favor ingrese una contraseña.' : 'La contraseña debe tener al menos 8 caracteres, una mayúscula, al menos un número y un símbolo especial (!,*,?,#).' }}
           </div>
           <div class="col-12 mt-2 form-check">
             <input class="form-check-input" type="checkbox" name="checkbox" id="mostrarContrasenia" [(ngModel)]="verContrasenia" (change)="cambiarvistaContrasenia($event)">

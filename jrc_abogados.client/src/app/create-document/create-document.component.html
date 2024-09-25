@@ -10,32 +10,30 @@
           <span class="input-group-text" id="inputGroupPrepend">Nombre del Documento</span>
           <input type="text" class="form-control" name="nombre" id="validacionNombre" placeholder="Ingrese un nombre" minlength="5" maxlength="30" (keydown)="validarTexto($event, 1)" [(ngModel)]="documento.nombre" required>
           <div class="invalid-feedback">
-            {{ !documento.nombre ? 'Por favor ingrese el nombre del documento.' : 'Ingrese un nombre mas completo con al menos 5 caracteres.' }}
+            {{ !documento.nombre ? 'Por favor ingrese el nombre del documento.' : 'Ingrese un nombre más completo con al menos 5 caracteres.' }}
           </div>
         </div>
 
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Descripción</span>
-          <input type="text" class="form-control" name="descripcion" id="validacionDescripcion" placeholder="Ingrese descripción del documento" minlength="5" maxlength="40" (keydown)="validarTexto($event, 1)" [(ngModel)]="documento.descripcion" required>
+          <input type="text" class="form-control" name="descripcion" id="validacionDescripcion" placeholder="Ingrese la descripción del documento" minlength="5" maxlength="40" (keydown)="validarTexto($event, 1)" [(ngModel)]="documento.descripcion" required>
           <div class="invalid-feedback">
-            {{ !documento.descripcion ? 'Por favor ingrese la descripción del documento.' : 'Ingrese una descripción mas completo con al menos 5 caracteres.' }}
+            {{ !documento.descripcion ? 'Por favor ingrese la descripción del documento.' : 'Ingrese una descripción más completa con al menos 5 caracteres.' }}
           </div>
         </div>
 
         <div class="col-12 input-group" *ngIf="!documentoId">
-          <input type="file" class="form-control" name="archivo" id="validacionArchivo"  (change)="onFileSelected($event)" accept="application/pdf" required>
+          <input type="file" class="form-control" name="archivo" id="validacionArchivo" (change)="onFileSelected($event)" accept="application/pdf" required>
           <span class="input-group-text" id="inputGroupPrepend">PDF.</span>
           <div class="invalid-feedback">
             Por favor seleccione un archivo PDF.
           </div>
         </div>
 
-
-
         <div *ngIf="errorMensaje" class="alert alert-danger" role="alert">
           {{ errorMensaje }}
         </div>
-        <div class="col-12  d-flex justify-content-end">
+        <div class="col-12 d-flex justify-content-end">
           <button *ngIf="documentoId === 0" class="btn btn-primary" type="submit" [disabled]="creandoDocumento" (click)="iniciarValidadores()">
             <span *ngIf="!creandoDocumento">Crear Documento</span>
             <span *ngIf="creandoDocumento">Creando Documento...</span>

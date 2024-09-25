@@ -11,7 +11,7 @@
       <select class="form-select" [(ngModel)]="campoFiltro">
         <option value="cliente.nombre">Nombre</option>
         <option value="cliente.apellido">Apellido</option>
-        <option value="titulo">Titulo</option>
+        <option value="titulo">Título</option>
         <option value="fecha">Fecha</option>
       </select>
       <input type="text" class="form-control" id="searchInput" [(ngModel)]="buscarPalabra" placeholder="Buscar recordatorio">
@@ -21,10 +21,10 @@
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th>Mas</th>
+        <th>Más</th>
         <th>Nombre</th>
         <th>Apellido</th>
-        <th>Titulo</th>
+        <th>Título</th>
         <th>Fecha</th>
       </tr>
     </thead>
@@ -70,10 +70,10 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p><strong>Titulo:</strong> {{ recordatorioSeleccionado?.titulo }}</p>
-        <p><strong>Descripcion:</strong> {{ recordatorioSeleccionado?.descripcion }}</p>
+        <p><strong>Título:</strong> {{ recordatorioSeleccionado?.titulo }}</p>
+        <p><strong>Descripción:</strong> {{ recordatorioSeleccionado?.descripcion }}</p>
         <p><strong>Fecha:</strong> {{ recordatorioSeleccionado?.fecha }}</p>
-        <p><strong>hora:</strong> {{ recordatorioSeleccionado?.hora }}</p>
+        <p><strong>Hora:</strong> {{ recordatorioSeleccionado?.hora }}</p>
         <p><strong>Datos del Cliente.</strong></p>
         <p><strong>Nombre Cliente:</strong> {{ recordatorioSeleccionado?.cliente?.nombre }}</p>
         <p><strong>Apellido Cliente:</strong> {{ recordatorioSeleccionado?.cliente?.apellido }}</p>

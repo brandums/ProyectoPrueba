@@ -4,12 +4,14 @@ import { Documento } from '../Models/Documento';
 import { DocumentoService } from '../services/document-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DomSanitizer } from '@angular/platform-browser';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-document-list',
   templateUrl: './document-list.component.html'
 })
 export class DocumentListComponent implements OnInit {
+  user: any;
   documentos: Documento[] = [];
   buscarPalabra: string = '';
   documentoSeleccionado: Documento | null = null;
@@ -24,10 +26,14 @@ export class DocumentListComponent implements OnInit {
     private documentoService: DocumentoService,
     private alertService: AlertService,
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.route.queryParams.subscribe(params => {
       this.expedienteId = +params['expedienteId'];
     });
@@ -83,7 +89,7 @@ export class DocumentListComponent implements OnInit {
   }
 
   eliminarDocumento(id: number): void {
-    this.documentoService.eliminarDocumento(id)
+    this.documentoService.eliminarDocumento(id, this.user.id)
       .subscribe(() => {
         this.documentos = this.documentos.filter(caso => caso.id !== id);
         this.alertService.showMessage('Documento eliminado con exito.');

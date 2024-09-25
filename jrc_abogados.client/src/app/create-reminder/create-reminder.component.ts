@@ -4,12 +4,14 @@ import { Recordatorio } from '../Models/Recordatorio';
 import { Cliente } from '../Models/Cliente';
 import { ClienteService } from '../services/cliente-service';
 import { AlertService } from '../services/AlertService';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-create-reminder',
   templateUrl: './create-reminder.component.html'
 })
 export class CreateReminderComponent implements OnInit {
+  user: any;
   recordatorio: Recordatorio = new Recordatorio;
   clientes: Cliente[] = [];
   recordatorioId: number = 0;
@@ -20,10 +22,15 @@ export class CreateReminderComponent implements OnInit {
   constructor(
     private recordatorioService: RecordatorioService,
     private clienteService: ClienteService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.clienteService.getClientes().subscribe(data => this.clientes = data);
 
     this.recordatorioService.$recordatorioId.subscribe(id => {
@@ -125,6 +132,7 @@ export class CreateReminderComponent implements OnInit {
 
   crearRecordatorio() {
     this.creandoRecordatorio = true;
+    this.recordatorio.empleadoId = this.user.id;
     this.recordatorio.clienteId = parseInt(this.recordatorio.clienteId);
     this.recordatorioService.crearRecordatorio(this.recordatorio).subscribe(() => {
       this.recordatorioService.nuevoRecordatorio();
@@ -139,7 +147,7 @@ export class CreateReminderComponent implements OnInit {
 
   actualizarRecordatorio() {
     this.creandoRecordatorio = true;
-    this.recordatorioService.actualizarRecordatorio(this.recordatorioId, this.recordatorio).subscribe(() => {
+    this.recordatorioService.actualizarRecordatorio(this.recordatorioId, this.user.id, this.recordatorio).subscribe(() => {
       this.recordatorioService.nuevoRecordatorio();
 
       this.cerrarForm();

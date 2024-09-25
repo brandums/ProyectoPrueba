@@ -2,12 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { Cliente } from '../Models/Cliente';
 import { ClienteService } from '../services/cliente-service';
 import { AlertService } from '../services/AlertService';
+import { AuthService } from '../services/AuthService';
 
 @Component({
   selector: 'app-client-list',
   templateUrl: './client-list.component.html'
 })
 export class ClientListComponent implements OnInit {
+  user: any;
   clientes: Cliente[] = [];
   buscarPalabra: string = '';
   clienteSeleccionado: Cliente | null = null;
@@ -19,10 +21,15 @@ export class ClientListComponent implements OnInit {
 
   constructor(
     private clienteService: ClienteService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
+    this.authService.usuario.subscribe(usuario => {
+      this.user = usuario;
+    });
+
     this.getClientes();
 
     this.clienteService.$listaClientes.subscribe(data => {
@@ -54,8 +61,7 @@ export class ClientListComponent implements OnInit {
   }
 
   eliminarCliente(id: number): void {
-    this.clienteService.eliminarCliente(id)
-      .subscribe(() => {
+    this.clienteService.eliminarCliente(id, this.user.id).subscribe(() => {
         this.clientes = this.clientes.filter(cliente => cliente.id !== id);
         this.alertService.showMessage('Cliente eliminado con exito.');
       });

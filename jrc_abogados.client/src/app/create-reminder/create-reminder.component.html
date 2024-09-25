@@ -7,17 +7,17 @@
     <div class="modal-body">
       <form class="row g-3 needs-validation" name="formularioRecordatorio" novalidate>
         <div class="col-12 input-group">
-          <span class="input-group-text" id="inputGroupPrepend">Titulo</span>
-          <input type="text" class="form-control" name="Titulo" id="validacionTitulo" placeholder="Ingrese un titulo" minlength="5" maxlength="30" onpaste="return false;" (keydown)="validarTexto($event, 1)" [(ngModel)]="recordatorio.titulo" required>
+          <span class="input-group-text" id="inputGroupPrepend">Título</span>
+          <input type="text" class="form-control" name="Titulo" id="validacionTitulo" placeholder="Ingrese un título" minlength="5" maxlength="30" onpaste="return false;" (keydown)="validarTexto($event, 1)" [(ngModel)]="recordatorio.titulo" required>
           <div class="invalid-feedback">
-            {{ !recordatorio.titulo ? 'Por favor ingrese un titulo.' : 'Ingrese un titulo mas completo con al menos 5 caracteres.' }}
+            {{ !recordatorio.titulo ? 'Por favor ingrese un título.' : 'Ingrese un título más completo con al menos 5 caracteres.' }}
           </div>
         </div>
         <div class="col-12 input-group">
-          <span class="input-group-text" id="inputGroupPrepend">Descripcion</span>
-          <input type="text" class="form-control" name="Descripcion" id="validacionDescripcion" placeholder="Ingrese descripcion del recordatorio" minLength="5" maxlength="40" (keydown)="validarTexto($event, 1)" [(ngModel)]="recordatorio.descripcion" required>
+          <span class="input-group-text" id="inputGroupPrepend">Descripción</span>
+          <input type="text" class="form-control" name="Descripcion" id="validacionDescripcion" placeholder="Ingrese descripción del recordatorio" minlength="5" maxlength="40" (keydown)="validarTexto($event, 1)" [(ngModel)]="recordatorio.descripcion" required>
           <div class="invalid-feedback">
-            {{ !recordatorio.descripcion ? 'Por favor ingrese una descripcion.' : 'Por favor ingrese una descripcion válida con mas de 5 caracteres.' }}
+            {{ !recordatorio.descripcion ? 'Por favor ingrese una descripción.' : 'Por favor ingrese una descripción válida con más de 5 caracteres.' }}
           </div>
         </div>
         <div class="col-12 d-flex f-direction-row">
@@ -35,7 +35,7 @@
               <span class="input-group-text" id="inputGroupPrepend">Hora:</span>
               <input type="time" class="form-control" name="Hora" id="validacionHora" placeholder="Hora" min="08:30" max="18:30" (change)="validarHora($event)" [(ngModel)]="recordatorio.hora" required>
               <div class="invalid-feedback">
-                Ingrese la hora entre 8-12 AM o 2-6:30 PM.
+                Ingrese la hora entre 8:00 AM y 6:30 PM.
               </div>
             </div>
           </div>
@@ -43,14 +43,14 @@
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Cliente</span>
           <select class="form-select" name="Cliente" id="validacionCliente" [(ngModel)]="recordatorio.clienteId" required>
-            <option value="" disabled selected>Selecciona un cliente</option>
+            <option value="" disabled selected>Seleccione un cliente</option>
             <option *ngFor="let cliente of clientes" [value]="cliente.id">{{ cliente.nombre }} {{ cliente.apellido }}</option>
           </select>
           <div class="invalid-feedback">
-            Por favor seleccion un cliente.
+            Por favor seleccione un cliente.
           </div>
         </div>
-        <div class="col-12  d-flex justify-content-end">
+        <div class="col-12 d-flex justify-content-end">
           <button *ngIf="recordatorioId === 0" class="btn btn-primary" type="submit" [disabled]="creandoRecordatorio" (click)="iniciarValidadores()">
             <span *ngIf="!creandoRecordatorio">Crear recordatorio</span>
             <span *ngIf="creandoRecordatorio">Creando recordatorio...</span>
