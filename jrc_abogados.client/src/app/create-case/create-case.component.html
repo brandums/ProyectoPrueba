@@ -25,9 +25,16 @@
         </div>
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Número de Expediente</span>
-          <input type="text" class="form-control" name="NumeroExpediente" id="validacionNumeroExpediente" placeholder="116/20022/2-F" minlength="7" maxlength="14" (paste)="limitarNumeros($event)" (keydown)="validarTexto($event, 1); limitarAlfanumerico($event)" [(ngModel)]="caso.juzgado.numeroExpediente" required>
-          <div class="invalid-feedback">
-            {{ !caso.juzgado.numeroExpediente ? 'Por favor ingrese el número de expediente.' : 'Ingrese un número de expediente de 6-10 digitos.' }}
+          <input type="text" class="form-control" name="NumeroExpediente" id="validacionNumeroExpediente" pattern="^\d+\/\d+\/\d+-\w+$" placeholder="116/20022/2-F" minlength="7" maxlength="14" (paste)="limitarNumeros($event)" (keydown)="validarTexto($event, 1); limitarAlfanumerico($event)" [(ngModel)]="caso.juzgado.numeroExpediente" required>
+          <div class="invalid-feedback" *ngIf="!esFormatoCorrecto(caso.juzgado.numeroExpediente)">
+            El número de expediente debe incluir dos "/" y un "-".
+          </div>
+
+          <div class="invalid-feedback" *ngIf="!caso.juzgado.numeroExpediente">
+            Por favor ingrese el número de expediente.
+          </div>
+          <div class="invalid-feedback" *ngIf="caso.juzgado.numeroExpediente.length < 14 && caso.juzgado.numeroExpediente.length > 0">
+            Ingrese un número de expediente de entre 7 y 14 caracteres.
           </div>
         </div>
         <div class="col-12 input-group">

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/AuthService';
 import { Router } from '@angular/router';
 
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit {
   email: string = '';
   password: string = '';
   isSubmitted: boolean = false;
@@ -24,7 +24,19 @@ export class LoginComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    this.renderCaptcha()
+    this.loadReCaptchaScript();
+  }
+
+  loadReCaptchaScript() {
+    const scriptId = 'recaptcha-script';
+
+    const script = document.createElement('script');
+    script.id = scriptId;
+    script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
+    script.async = true;
+    script.defer = true;
+    script.onload = () => this.renderCaptcha();
+    document.body.appendChild(script);
   }
 
   renderCaptcha() {
@@ -53,7 +65,7 @@ export class LoginComponent implements OnInit {
     this.loggingIn = true;
     this.isSubmitted = true;
     this.errorMessage = null;
-
+    
     if (form.invalid || !this.captchaResponse) {
       this.loggingIn = false;
       return;

@@ -17,7 +17,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         //builder => builder.WithOrigins("https://localhost:4200")
-        builder => builder.WithOrigins("https://jrcproyect-001-site1.etempurl.com")
+        builder => builder.WithOrigins("https://jrcweb-001-site1.atempurl.com")
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .AllowCredentials());

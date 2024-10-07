@@ -108,11 +108,6 @@ namespace JRC_Abogados.Server.Controllers
                 return NotFound();
             }
 
-            if (!string.IsNullOrEmpty(empleado.Contraseña))
-            {
-                empleado.Contraseña = _passwordHasher.HashPassword(empleado, empleado.Contraseña);
-            }
-
             var detallesAccion = new StringBuilder();
 
             if (empleadoActual.Nombre != empleado.Nombre)

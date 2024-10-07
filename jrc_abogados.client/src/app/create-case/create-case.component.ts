@@ -156,6 +156,14 @@ export class CreateCaseComponent implements OnInit {
     }
   }
 
+  esFormatoCorrecto(numeroExpediente: string): boolean {
+    if (!numeroExpediente) {
+      return true;
+    }
+    return numeroExpediente.includes('/') && numeroExpediente.includes('-');
+  }
+
+
 
   iniciarValidadores() {
     const forms = document.querySelectorAll('.needs-validation');

@@ -48,7 +48,7 @@ export class CreateClientComponent implements OnInit {
           this.nickEmail = partesEmail[0];
           this.extencionEmail = partesEmail[1].split('.')[0];
           this.extencionEmail2 = partesEmail[1].split('.')[1];
-          this._telefono = data.telefono;
+          this.telefono = data.telefono;
           this.estadoActual = data.ubicacion.estado;
           this.onStateChange(this.cliente.ubicacion.estado);
         })
@@ -278,7 +278,7 @@ export class CreateClientComponent implements OnInit {
     this.creandoCliente = true;
     this.errorMensaje = null;
     this.unirEmail()
-    this.cliente.telefono = this._telefono;
+    this.cliente.telefono = this.telefono;
 
     this.ubicacionService.crearUbicacion(this.cliente.ubicacion).subscribe(data => {
       this.cliente.ubicacionId = data.id;
@@ -300,7 +300,7 @@ export class CreateClientComponent implements OnInit {
 
   actualizarCliente() {
     this.unirEmail();
-    this.cliente.telefono = this._telefono;
+    this.cliente.telefono = this.telefono;
 
     this.ubicacionService.getUbicacion(this.cliente.ubicacionId).subscribe(ubicacionOriginal => {
       if (ubicacionOriginal.direccion !== this.cliente.ubicacion.direccion ||

@@ -60,6 +60,13 @@ export class DocumentListComponent implements OnInit {
     this._modal.nativeElement.setAttribute('src', '')
   }
 
+  printPDF() {
+    const iframe: HTMLIFrameElement = this._modal.nativeElement;
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.print();
+    }
+  }
+
   seleccionarDocumento(documentoId: number) {
     this.documentoService.seleccionarDocumento(documentoId);
   }

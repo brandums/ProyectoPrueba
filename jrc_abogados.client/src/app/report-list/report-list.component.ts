@@ -28,13 +28,13 @@ export class ReportListComponent implements OnInit {
     private reporteService: ReporteService,
     private alertService: AlertService,
     private authService: AuthService
-  ) { }
-
-  ngOnInit(): void {
+  ) {
     this.authService.usuario.subscribe(usuario => {
       this.user = usuario;
     });
+  }
 
+  ngOnInit(): void {
     this.getReportes();
 
     this.reporteService.$listaReportes.subscribe(data => this.reportes = data);
@@ -53,6 +53,13 @@ export class ReportListComponent implements OnInit {
   closeModal() {
     this.displayStyle = "none";
     this._modal.nativeElement.setAttribute('src', '')
+  }
+
+  printPDF() {
+    const iframe: HTMLIFrameElement = this._modal.nativeElement;
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.print();
+    }
   }
 
   seleccionarReporte(casoId: number) {

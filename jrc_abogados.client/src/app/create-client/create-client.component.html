@@ -52,12 +52,15 @@
                  name="Telefono"
                  id="validacionTelefono"
                  placeholder="(00) 0000-0000"
-                 minlength="14"
-                 maxlength="14"
+                 minlength="10"
+                 maxlength="10"
                  autocomplete="off"
-                 (keydown)="validarTeclas($event)"
+                 (keydown)="limitarNumeros($event)"
                  [(ngModel)]="_telefono"
-                 required>          
+                 required>
+
+          <span class="input-group-text" id="inputGroupPrepend">{{ !telefono ? '(00) 0000-0000' : telefono }}</span>
+
           <div class="invalid-feedback">
             {{ !_telefono ? 'Por favor ingrese su teléfono.' : 'El teléfono debe tener 10 caracteres.' }}
           </div>

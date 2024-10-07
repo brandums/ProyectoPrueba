@@ -2,6 +2,6 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ActiveDebugProfile>https</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\Properties\PublishProfiles\jrcproyect-001-site1 - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\brran\OneDrive\Escritorio\JRC_Abogados\JRC_Abogados.Server\Properties\PublishProfiles\jrcweb-001-site1 - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
