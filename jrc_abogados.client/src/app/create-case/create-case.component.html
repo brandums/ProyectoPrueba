@@ -25,7 +25,7 @@
         </div>
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Número de Expediente</span>
-          <input type="text" class="form-control" name="NumeroExpediente" id="validacionNumeroExpediente" pattern="^\d+\/\d+\/\d+-\w+$" placeholder="116/20022/2-F" minlength="7" maxlength="14" (paste)="limitarNumeros($event)" (keydown)="validarTexto($event, 1); limitarAlfanumerico($event)" [(ngModel)]="caso.juzgado.numeroExpediente" required>
+          <input type="text" class="form-control" name="NumeroExpediente" id="validacionNumeroExpediente" pattern="^\d+\/\d+\/\d+-\w+$" placeholder="116/2024/2-F" minlength="7" maxlength="14" (paste)="limitarNumeros($event)" (keydown)="validarTexto($event, 1); limitarAlfanumerico($event)" [(ngModel)]="caso.juzgado.numeroExpediente" required>
           <div class="invalid-feedback" *ngIf="!esFormatoCorrecto(caso.juzgado.numeroExpediente)">
             El número de expediente debe incluir dos "/" y un "-".
           </div>
@@ -73,7 +73,7 @@
         </div>
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Descripción</span>
-          <input type="text" class="form-control" name="Descripcion" id="validacionDescripcion" placeholder="Ingrese descripcion del caso" minLength="5" maxlength="40" (keydown)="validarTexto($event, 1)" [(ngModel)]="caso.descripcion" required>
+          <input type="text" class="form-control" name="Descripcion" id="validacionDescripcion" placeholder="Ingrese descripcion del caso" minLength="5" maxlength="60" (keydown)="validarTexto($event, 1)" [(ngModel)]="caso.descripcion" required>
           <div class="invalid-feedback">
             {{ !caso.descripcion ? 'Por favor ingrese una descripción.' : 'Por favor ingrese una descripción válida con mas de 5 caracteres.' }}
           </div>

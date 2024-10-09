@@ -27,6 +27,7 @@
       <tr *ngFor="let documento of documentosPaginados">
         <td>
           <i class="fas fa-eye" (click)="verDocumento(documento)" data-bs-toggle="modal" data-bs-target="#document-detail-modal"></i>
+          <i class="fas fa-paper-plane" style="margin-left:15px;" (click)="verDocumento(documento)" data-bs-toggle="modal" data-bs-target="#document-send-pdf"></i>
         </td>
         <td>{{ documento.nombre }}</td>
         <td>{{ documento.descripcion }}</td>
@@ -109,6 +110,47 @@
       </div>
       <div class="modal-body">
         <iframe type="application/pdf" width="100%" height="800px" #modalPDF></iframe>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" (click)="printPDF()">Imprimir PDF</button>
+        <button type="button" class="btn btn-secondary" (click)="downloadPDF()">Descargar PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="document-send-pdf" class="modal fade custom-backdrop">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Compartir Documento</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3 needs-validation" name="formularioReporte" novalidate>
+          <div class="col-12">
+            <div class="input-group has-validation">
+              <span class="input-group-text" id="inputGroupPrepend">Email</span>
+              <input type="text" class="form-control" name="Email" id="validacionEmail" aria-describedby="inputGroupPrepend" minlength="5" maxlength="20" autocomplete="new-password" (paste)="validarEmail($event)" (keydown)="validarEmail($event)" [(ngModel)]="nickEmail" placeholder="Nickname" required>
+              <span class="input-group-text" id="inputGroupPrepend">@</span>
+              <select class="form-select auxEmail" name="extencionEmail" id="validacionEmail" [(ngModel)]="extencionEmail" required>
+                <option value="gmail">gmail</option>
+                <option value="hotmail">hotmail</option>
+                <option value="yahoo">yahoo</option>
+                <option value="outlook">outlook</option>
+              </select>
+              <span class="input-group-text" id="inputGroupPrepend">.com</span>
+              <div class="invalid-feedback">
+                {{ !nickEmail ? 'Por favor ingrese su email.' : 'El nickname debe tener al menos 5 caracteres.' }}
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" (click)="iniciarValidadores()" [disabled]="enviandoPDF" class="btn btn-primary">Enviar</button>
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

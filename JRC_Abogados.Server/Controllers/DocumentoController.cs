@@ -1,6 +1,7 @@
 ﻿using JRC_Abogados.Server.DataBaseContext;
 using JRC_Abogados.Server.Models;
 using JRC_Abogados.Server.Models.audits;
+using JRC_Abogados.Server.Models.EmailHelper;
 using JRC_Abogados.Server.ModelsDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,12 @@ namespace JRC_Abogados.Server.Controllers
     public class DocumentoController : ControllerBase
     {
         private readonly DBaseContext _context;
+        private readonly IEmailSender _emailSender;
 
-        public DocumentoController(DBaseContext context)
+        public DocumentoController(DBaseContext context, IEmailSender emailSender)
         {
             _context = context;
+            _emailSender = emailSender;
         }
 
         [HttpGet("documentsByExpedient/{id}")]
@@ -51,6 +54,24 @@ namespace JRC_Abogados.Server.Controllers
             return documento;
         }
 
+        [HttpGet("sendPDF/{id}/{mail}")]
+        public async Task<ActionResult<Documento>> SendPDF(int id, string mail)
+        {
+            var documento = await _context.Documento.FindAsync(id);
+
+            if (documento == null)
+            {
+                return NotFound();
+            }
+
+            string emailSubject = "Documento JRC Abogados.";
+            string emailBody = $"<p>Por favor, haga clic en el siguiente enlace para ver el documento:</p><a href='https://jrcweb-001-site1.atempurl.com{documento.Path}'>Ver Documento</a>";
+
+            await _emailSender.SendEmailAsync(mail, emailSubject, emailBody);
+
+            return Ok();
+        }
+
         [HttpPost, DisableRequestSizeLimit]
         public async Task<ActionResult<Documento>> PostDocumento([FromForm] DocumentoDTO documentoDTO, IFormFile file)
         {
@@ -62,6 +83,7 @@ namespace JRC_Abogados.Server.Controllers
             var documento = new Documento
             {
                 Nombre = documentoDTO.Nombre,
+                Path = "",
                 ExpedienteId = documentoDTO.ExpedienteId,
                 Descripcion = documentoDTO.Descripcion,
                 FechaInicio = DateTime.Now,

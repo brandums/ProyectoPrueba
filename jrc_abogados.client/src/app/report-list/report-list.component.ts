@@ -62,6 +62,17 @@ export class ReportListComponent implements OnInit {
     }
   }
 
+  downloadPDF() {
+    const iframe: HTMLIFrameElement = this._modal.nativeElement;
+    if (iframe) {
+      const link = document.createElement('a');
+      link.href = iframe.src;
+      link.download = this.reporteSeleccionado?.nombre || 'reporte.pdf';
+      link.click();
+    }
+  }
+
+
   seleccionarReporte(casoId: number) {
     this.reporteService.seleccionarReporte(casoId);
   }

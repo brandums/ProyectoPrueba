@@ -1,6 +1,7 @@
 ﻿using JRC_Abogados.Server.DataBaseContext;
 using JRC_Abogados.Server.Models;
 using JRC_Abogados.Server.Models.audits;
+using JRC_Abogados.Server.Models.EmailHelper;
 using JRC_Abogados.Server.ModelsDTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,10 +16,12 @@ namespace JRC_Abogados.Server.Controllers
     public class ExpedienteController : ControllerBase
     {
         private readonly DBaseContext _context;
+        private readonly IEmailSender _emailSender;
 
-        public ExpedienteController(DBaseContext context)
+        public ExpedienteController(DBaseContext context, IEmailSender emailSender)
         {
             _context = context;
+            _emailSender = emailSender;
         }
 
         [HttpGet]
@@ -195,7 +198,7 @@ namespace JRC_Abogados.Server.Controllers
             }
 
             var documentos = await _context.Documento.Where(c => c.ExpedienteId == id).ToListAsync();
-            var documentoController = new DocumentoController(_context);
+            var documentoController = new DocumentoController(_context, _emailSender);
 
             foreach (var documento in documentos)
             {

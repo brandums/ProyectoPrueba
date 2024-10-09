@@ -15,7 +15,7 @@
         </div>
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Descripción</span>
-          <input type="text" class="form-control" name="Descripcion" id="validacionDescripcion" placeholder="Ingrese descripción del recordatorio" minlength="5" maxlength="40" (keydown)="validarTexto($event, 1)" [(ngModel)]="recordatorio.descripcion" required>
+          <input type="text" class="form-control" name="Descripcion" id="validacionDescripcion" placeholder="Ingrese descripción del recordatorio" minlength="5" maxlength="60" (keydown)="validarTexto($event, 1)" [(ngModel)]="recordatorio.descripcion" required>
           <div class="invalid-feedback">
             {{ !recordatorio.descripcion ? 'Por favor ingrese una descripción.' : 'Por favor ingrese una descripción válida con más de 5 caracteres.' }}
           </div>

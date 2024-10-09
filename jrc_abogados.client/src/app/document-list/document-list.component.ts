@@ -3,7 +3,6 @@ import { AlertService } from '../services/AlertService';
 import { Documento } from '../Models/Documento';
 import { DocumentoService } from '../services/document-service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
 import { AuthService } from '../services/AuthService';
 
 @Component({
@@ -16,6 +15,10 @@ export class DocumentListComponent implements OnInit {
   buscarPalabra: string = '';
   documentoSeleccionado: Documento | null = null;
   expedienteId: any;
+  formValidado = false;
+  extencionEmail = "gmail";
+  nickEmail = ""
+  enviandoPDF = false;
 
   paginaActual: number = 1;
   documentosPorPagina: number = 10;
@@ -67,6 +70,16 @@ export class DocumentListComponent implements OnInit {
     }
   }
 
+  downloadPDF() {
+    const iframe: HTMLIFrameElement = this._modal.nativeElement;
+    if (iframe) {
+      const link = document.createElement('a');
+      link.href = iframe.src;
+      link.download = this.documentoSeleccionado?.nombre || 'documento.pdf';
+      link.click();
+    }
+  }
+
   seleccionarDocumento(documentoId: number) {
     this.documentoService.seleccionarDocumento(documentoId);
   }
@@ -101,6 +114,83 @@ export class DocumentListComponent implements OnInit {
         this.documentos = this.documentos.filter(caso => caso.id !== id);
         this.alertService.showMessage('Documento eliminado con exito.');
       });
+  }
+
+  validarEmail(event: KeyboardEvent | ClipboardEvent) {
+    const teclaPresionada = (event as KeyboardEvent).key;
+    const patron = /^[^\s'"@]$/;
+
+    if (event instanceof KeyboardEvent) {
+      if (!patron.test(teclaPresionada) && teclaPresionada !== 'Backspace' && teclaPresionada !== 'Delete' && teclaPresionada !== 'ArrowLeft' && teclaPresionada !== 'ArrowRight') {
+        event.preventDefault();
+      }
+    }
+
+    if (event instanceof ClipboardEvent) {
+      const clipboardData = event.clipboardData?.getData('text') || '';
+      if (/[@^\s'"]/.test(clipboardData)) {
+        event.preventDefault();
+      }
+    }
+  }
+
+  iniciarValidadores() {
+    const forms = document.querySelectorAll('.needs-validation');
+
+    Array.from(forms).forEach((form: Element) => {
+      const typedForm = form as HTMLFormElement;
+      typedForm.addEventListener('submit', (event) => {
+        if (this.formValidado) {
+          event.preventDefault();
+          event.stopPropagation();
+          return;
+        }
+        if (!typedForm.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        else {
+          this.formValidado = true;
+          this.enviarDocumento();
+        }
+
+        typedForm.classList.add('was-validated');
+      }, false);
+    });
+  }
+
+  enviarDocumento() {
+    this.enviandoPDF = true;
+    var email = this.nickEmail + "@" + this.extencionEmail + ".com"
+    if (this.documentoSeleccionado) {
+      this.documentoService.sendPDF(this.documentoSeleccionado.id, email).subscribe(() => {
+
+        this.cerrarForm();
+        this.enviandoPDF = false;
+        this.alertService.showMessage('PDF enviado con exito.');
+      }, () => {
+        this.enviandoPDF = false;
+        this.formValidado = false;
+      })
+    }
+  }
+
+  cerrarForm() {
+    const button = document.getElementById('bClose');
+    if (button instanceof HTMLElement) {
+      button.click()
+    }
+  }
+
+  limpiarForm() {
+    this.nickEmail = "";
+    this.formValidado = false;
+    this.enviandoPDF = false;
+
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach((form: Element) => {
+      form.classList.remove('was-validated');
+    });
   }
 
   // Métodos para la paginación

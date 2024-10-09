@@ -214,7 +214,7 @@ namespace JRC_Abogados.Server.Controllers
 
             var casoController = new CasoController(_context, _emailSender);
             var citaController = new CitaController(_context, _emailSender);
-            var expedienteController = new ExpedienteController(_context);
+            var expedienteController = new ExpedienteController(_context, _emailSender);
             var citas = await _context.Cita.Where(c => c.ClienteId == id).ToListAsync();
 
             foreach (var cita in citas)

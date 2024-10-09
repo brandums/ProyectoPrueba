@@ -40,7 +40,7 @@
         </div>
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Descripción</span>
-          <input type="text" class="form-control" name="Notas" id="validacionNotas" placeholder="Ingrese descripción de la cita" minLength="6" maxlength="40" (keydown)="validarTexto($event, 1)" [(ngModel)]="cita.notas" required>
+          <input type="text" class="form-control" name="Notas" id="validacionNotas" placeholder="Ingrese descripción de la cita" minLength="6" maxlength="60" (keydown)="validarTexto($event, 1)" [(ngModel)]="cita.notas" required>
           <div class="invalid-feedback">
             {{ !cita.notas ? 'Por favor ingrese una descripción.' : 'Por favor ingrese una descripción válida con al menos 6 caracteres.' }}
           </div>

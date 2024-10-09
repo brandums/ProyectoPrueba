@@ -35,6 +35,10 @@ export class DocumentoService {
     );
   }
 
+  sendPDF(id: number, mail: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/sendPDF/${id}/${mail}`);
+  }
+
   crearDocumento(formData: FormData): Observable<Documento> {
     return this.http.post<Documento>(`${this.baseUrl}`, formData).pipe(
       catchError((error) => {

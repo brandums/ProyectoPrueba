@@ -119,6 +119,7 @@ export class CreateDocumentComponent implements OnInit {
     formData.append('nombre', this.documento.nombre);
     formData.append('descripcion', this.documento.descripcion);
     formData.append('expedienteId', this.documento.expedienteId.toString());
+    formData.append('empleadoId', this.user.id);
 
     this.documentoService.crearDocumento(formData).subscribe(() => {
       this.documentoService.nuevoDocumento();

@@ -16,7 +16,7 @@ namespace JRC_Abogados.Server.Models
         public virtual Expediente Expediente { get; set; }
         public int ClienteId { get; set; }
         [ForeignKey("ClienteId")]
-        public virtual Cliente Cliente { get; set; }
+        public virtual Cliente? Cliente { get; set; }
         public int EmpleadoId { get; set; }
         [ForeignKey("EmpleadoId")]
         public virtual Empleado? Empleado { get; set; }

@@ -81,7 +81,7 @@ namespace JRC_Abogados.Server.Controllers
             }
 
             string emailSubject = "Reporte JRC Abogados.";
-            string emailBody = $"<p>Por favor, haga clic en el siguiente enlace para ver su reporte:</p><a href='https://jrcproyect-001-site1.etempurl.com{reporte.Path}'>Ver Reporte</a>";
+            string emailBody = $"<p>Por favor, haga clic en el siguiente enlace para ver su reporte:</p><a href='https://jrcweb-001-site1.atempurl.com{reporte.Path}'>Ver Reporte</a>";
 
             await _emailSender.SendEmailAsync(mail, emailSubject, emailBody);
 

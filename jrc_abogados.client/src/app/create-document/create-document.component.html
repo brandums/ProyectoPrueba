@@ -16,7 +16,7 @@
 
         <div class="col-12 input-group">
           <span class="input-group-text" id="inputGroupPrepend">Descripción</span>
-          <input type="text" class="form-control" name="descripcion" id="validacionDescripcion" placeholder="Ingrese la descripción del documento" minlength="5" maxlength="40" (keydown)="validarTexto($event, 1)" [(ngModel)]="documento.descripcion" required>
+          <input type="text" class="form-control" name="descripcion" id="validacionDescripcion" placeholder="Ingrese la descripción del documento" minlength="5" maxlength="60" (keydown)="validarTexto($event, 1)" [(ngModel)]="documento.descripcion" required>
           <div class="invalid-feedback">
             {{ !documento.descripcion ? 'Por favor ingrese la descripción del documento.' : 'Ingrese una descripción más completa con al menos 5 caracteres.' }}
           </div>
